@@ -1,0 +1,11 @@
+﻿生成启动时间为 2018/5/10 13:39:14。
+     1>项目“Y:\work\code\nginx_dev\nginx_http_back_end\nginx_http_back_end\nginx_http_back_end\nginx_http_back_end.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Visual Leak Detector\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /FR"Debug\\" /Gd /TC /analyze- /errorReport:prompt ..\..\src\ngx_http_back_end_module.c
+         ngx_http_back_end_module.c
+     1>y:\work\code\nginx_dev\nginx_http_back_end\src\ngx_http_back_end_module.c(2): fatal error C1083: 无法打开包括文件: “ngx_module.h”: No such file or directory
+     1>已完成生成项目“Y:\work\code\nginx_dev\nginx_http_back_end\nginx_http_back_end\nginx_http_back_end\nginx_http_back_end.vcxproj”(Build 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:01.81

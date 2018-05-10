@@ -1,0 +1,2 @@
+#TargetFrameworkVersion=v4.0:PlatformToolSet=v140:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit
+Debug|Win32|Y:\work\code\nginx_dev\nginx_http_back_end\nginx_http_back_end\|
