@@ -1,0 +1,10 @@
+#1.先生成私钥key
+openssl genrsa -out ssl.key 2048
+
+#2.生成证书请求csr,其中days参数是证书有效期
+openssl req -new -key ssl.key -days 3650 -out ssl.csr
+
+#3.去CA机构，申请证书，需要将csr上传给CA机构。CA会根据你的申请返回一个证书给你。此时你已经有了ssl通信所需要的所有文件。目前有这么多免费的CA机构，这里就不再赘述
+
+#4.如果要生成私有的证书，可以直接用自己的私钥签名刚刚生成的证书请求:
+openssl x509 -req -in ssl.csr -signkey ssl.key -out ssl.crt

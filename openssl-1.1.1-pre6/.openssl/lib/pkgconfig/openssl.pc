@@ -1,0 +1,9 @@
+prefix=/home/ouyangjie/work/code/nginx_dev/nginx_http_backend/nginx-master/../openssl-1.1.1-pre6/.openssl
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: OpenSSL
+Description: Secure Sockets Layer and cryptography libraries and tools
+Version: 1.1.1-pre6
+Requires: libssl libcrypto
