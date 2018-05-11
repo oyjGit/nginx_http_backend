@@ -37,6 +37,18 @@ http {
         listen       80;
         server_name  localhost;
 
+    	listen       443;
+	server_name  localhost;
+	ssl          on;
+    	ssl_certificate      /home/ouyangjie/work/code/nginx_dev/nginx_http_backend/ca/ssl.crt;
+	ssl_certificate_key  /home/ouyangjie/work/code/nginx_dev/nginx_http_backend/ca/ssl.key;
+
+	ssl_session_timeout  5m;
+
+	ssl_protocols  SSLv2 SSLv3 TLSv1;
+	ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+	ssl_prefer_server_ciphers   on;
+
         #charset koi8-r;
 
         #access_log  logs/host.access.log  main;
@@ -93,6 +105,12 @@ http {
         #    deny  all;
         #}
     }
+
+    #server {
+	#location /app {
+	 #   mytest;
+	#}
+    #}
 
 
     # another virtual host using mix of IP-, name-, and port-based configuration
