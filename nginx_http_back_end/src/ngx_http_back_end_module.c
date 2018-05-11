@@ -1,5 +1,6 @@
 #include "ngx_module.h"
 #include "ngx_http.h"
+#include "mysql_helper.h"
 
 static char* ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
@@ -50,7 +51,6 @@ ngx_module_t ngx_http_back_end_module =
 static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
 {
 	// 请求的方法必须为GET或者HEAD
-	
 	if (!(r->method & (NGX_HTTP_GET | NGX_HTTP_HEAD)))
 		return NGX_HTTP_NOT_ALLOWED;
 
@@ -59,8 +59,20 @@ static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
 	if (rc != NGX_OK)
 		return rc;
 
-	ngx_str_t type = ngx_string("text/plain");
-	ngx_str_t response = ngx_string("{\"data\":\"hello world\"}");    // 包体内容
+	printf("start to connect...");
+	connect_mysql_server("192.168.6.100", 3306, "root", "Root/123", "iot_db_video");
+	printf("end connect...");
+
+	int count = exec_sql("select * from video_plan;");
+	printf("end exec sql...");
+
+	char res[1024] = { 0 };
+	snprintf(res, 1024, "{\"data\":\"hello world, result=%d\"}", count);
+
+	//ngx_str_t type = ngx_string("text/plain");
+	//ngx_str_t response = ngx_string("{\"data\":\"hello world\"}");    // 包体内容
+	ngx_str_t type = ngx_string("text/json");
+	ngx_str_t response = { strlen(res), (u_char*)res };
 
 														// 设置响应的HTTP头部
 	r->headers_out.status = NGX_HTTP_OK;           // 返回的响应码
