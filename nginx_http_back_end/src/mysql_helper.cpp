@@ -3,6 +3,10 @@
 
 static MYSQL* connection = NULL;
 
+
+extern "C" {
+
+
 int connect_mysql_server(const char* host, int16_t port, char* user_name, const char* pwd, const char* db) 
 {
 	if (NULL == host || NULL == user_name || NULL == pwd) 
@@ -19,8 +23,9 @@ int connect_mysql_server(const char* host, int16_t port, char* user_name, const 
 		return -3;
 	}
 	connection = mysql_real_connect(connection, host, user_name, pwd, db, 0, NULL, 0);
-	if (connection == NULL)
+	if (NULL == connection)
 	{
+		printf("connect host=%s, user name=%s, pwd=%s, db=%s failed, error=%d\n", host, user_name, pwd, db, mysql_errno(connection));
 		return -4;
 	}
 	return 0;
@@ -42,9 +47,13 @@ int disconnect_mysql_server()
 
 int exec_sql(const char* sql)
 {
-	if (mysql_query(connection, sql))
+	if (NULL == connection) 
 	{
 		return -1;
+	}
+	if (mysql_query(connection, sql))
+	{
+		return -2;
 	}
 	else
 	{
@@ -57,9 +66,15 @@ int exec_sql(const char* sql)
 			{
 				break;
 			}
+			else 
+			{
+				printf("%s\n", row[1]);
+			}
 		}
 		mysql_free_result(result);
 		return i;
 	}
 	return 0;
+}
+
 }

@@ -59,11 +59,11 @@ static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
 	if (rc != NGX_OK)
 		return rc;
 
-	printf("start to connect...");
-	connect_mysql_server("192.168.6.100", 3306, "root", "Root/123", "iot_db_video");
-	printf("end connect...");
+	printf("start to connect...\n");
+	int ret = connect_mysql_server("localhost", 3306, "root", "123456", "mytest");
+	printf("end connect... ret=%d\n", ret);
 
-	int count = exec_sql("select * from video_plan;");
+	int count = exec_sql("select * from test_table;");
 	printf("end exec sql...");
 
 	char res[1024] = { 0 };
