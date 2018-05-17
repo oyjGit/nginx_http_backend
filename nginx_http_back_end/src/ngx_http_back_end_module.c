@@ -59,12 +59,12 @@ static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r)
 	if (rc != NGX_OK)
 		return rc;
 
-	printf("start to connect...\n");
+	ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log , 0, "%s", "start to connect...\n");
 	int ret = connect_mysql_server("localhost", 3306, "root", "123456", "mytest");
-	printf("end connect... ret=%d\n", ret);
+	ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "end to connect..., ret=%d\n", ret);
 
 	int count = exec_sql("select * from test_table;");
-	printf("end exec sql...");
+	ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "%s", "end exec sql...\n");
 
 	char res[1024] = { 0 };
 	snprintf(res, 1024, "{\"data\":\"hello world, result=%d\"}", count);

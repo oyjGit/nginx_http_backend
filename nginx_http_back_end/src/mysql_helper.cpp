@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <mysql/mysql.h>
+#include "MySQLDBInstance.h"
 
 static MYSQL* connection = NULL;
 
@@ -7,7 +8,7 @@ static MYSQL* connection = NULL;
 extern "C" {
 
 
-int connect_mysql_server(const char* host, int16_t port, char* user_name, const char* pwd, const char* db) 
+int connect_mysql_server(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db)
 {
 	if (NULL == host || NULL == user_name || NULL == pwd) 
 	{
@@ -75,6 +76,30 @@ int exec_sql(const char* sql)
 		return i;
 	}
 	return 0;
+}
+
+void* connect(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db) 
+{
+	CMySqlDBInstance* ins = new CMySqlDBInstance;
+	std::string hostStr(host);
+	std::string name(user_name);
+	std::string passwd(pwd);
+	std::string dbName(db);
+	if (ins->connect(hostStr, port, name, passwd, dbName) != 0) 
+	{
+		delete ins;
+		return nullptr;
+	}
+	return ins;
+}
+
+void disconnect(void* handle) 
+{
+	if (nullptr != handle) 
+	{
+		CMySqlDBInstance* ins = (CMySqlDBInstance*)handle;
+		delete ins;
+	}
 }
 
 }

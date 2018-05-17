@@ -7,11 +7,15 @@
 extern "C"{
 #endif
 
-int connect_mysql_server(const char* host, int16_t port, char* user_name, const char* pwd, const char* db);
+int connect_mysql_server(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db);
 
 int disconnect_mysql_server();
 
 int exec_sql(const char* sql);
+
+void* connect(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db);
+
+void disconnect(void* handle);
 
 #ifdef __cplusplus
 };
