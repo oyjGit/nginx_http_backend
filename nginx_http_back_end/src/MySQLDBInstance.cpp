@@ -27,7 +27,7 @@ int CMySqlDBInstance::connect(const std::string& host, int16_t port, const std::
 		printf("set db conn charset failed\n");
 	}
 	// 连接数据库  
-	if (mConn->connect(dbName, host, userName, pwd) == false) 
+	if (mConn->connect(dbName.c_str(), host.c_str(), userName.c_str(), pwd.c_str(), port) == false)
 	{
 		printf("set db conn connect failed\n");
 		return -3;
@@ -72,8 +72,8 @@ int CMySqlDBInstance::query(const std::string& sql, CMySqlQueryResult& result)
 	{
 		return -2;
 	}
-	mysqlpp::Query query = mConn->query();
-	query() << sql;
-	result.fillData(query.store());
+	mysqlpp::Query qry = mConn->query();
+	qry << sql;
+	result.fillData(qry.store());
 	return 0;
 }

@@ -13,9 +13,9 @@ int disconnect_mysql_server();
 
 int exec_sql(const char* sql);
 
-void* connect(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db);
+void* connect_mysql_db(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db);
 
-void disconnect(void* handle);
+void disconnect_mysql_db(void* handle);
 
 #ifdef __cplusplus
 };

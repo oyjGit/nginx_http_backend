@@ -1,19 +1,20 @@
 #include "ngx_module.h"
 #include "ngx_http.h"
 #include "mysql_helper.h"
+#include "http_module_callback.h"
 
 static char* ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static ngx_http_module_t ngx_http_module_ctx =
 {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	http_preconfiguration,
+	http_postconfiguration,
+	http_create_main_conf,
+	http_init_main_conf,
+	http_create_srv_conf,
+	http_merge_srv_conf,
+	http_create_loc_conf,
+	http_merge_loc_conf,
 };
 
 static ngx_command_t  ngx_http_commands[] = {

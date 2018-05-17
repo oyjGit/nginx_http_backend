@@ -78,7 +78,7 @@ int exec_sql(const char* sql)
 	return 0;
 }
 
-void* connect(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db) 
+void* connect_mysql_db(const char* host, int16_t port, const char* user_name, const char* pwd, const char* db)
 {
 	CMySqlDBInstance* ins = new CMySqlDBInstance;
 	std::string hostStr(host);
@@ -93,7 +93,7 @@ void* connect(const char* host, int16_t port, const char* user_name, const char*
 	return ins;
 }
 
-void disconnect(void* handle) 
+void disconnect_mysql_db(void* handle)
 {
 	if (nullptr != handle) 
 	{
