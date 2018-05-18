@@ -1,4 +1,5 @@
-#include "http_module_callback.h"
+#include "http_module_customer_callback.h"
+#include "customer_backend_typedef.h"
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -13,7 +14,7 @@ ngx_int_t http_preconfiguration(ngx_conf_t *cf)
 
 ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 {
-	printf("http_preconfiguration...\n");
+	printf("http_postconfiguration...\n");
 	return 0;
 }
 
@@ -25,7 +26,7 @@ void* http_create_main_conf(ngx_conf_t *cf)
 
 char* http_init_main_conf(ngx_conf_t *cf, void *conf)
 {
-	printf("http_preconfiguration...\n");
+	printf("http_init_main_conf...\n");
 	return NULL;
 }
 
@@ -44,6 +45,7 @@ char* http_merge_srv_conf(ngx_conf_t *cf, void *prev, void *conf)
 void* http_create_loc_conf(ngx_conf_t *cf)
 {
 	printf("http_create_loc_conf...\n");
+	
 	return NULL;
 }
 

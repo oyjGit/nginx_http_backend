@@ -235,7 +235,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_upstream_zone_module.o \
 	objs/src/http/modules/ngx_http_stub_status_module.o \
 	objs/addon/src/ngx_http_back_end_module.o \
-	objs/addon/src/http_module_callback.o \
+	objs/addon/src/http_module_customer_callback.o \
 	objs/addon/src/mysql_helper.o \
 	objs/addon/src/MySQLDBInstance.o \
 	objs/addon/src/MySQLQueryResult.o \
@@ -364,7 +364,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_upstream_zone_module.o \
 	objs/src/http/modules/ngx_http_stub_status_module.o \
 	objs/addon/src/ngx_http_back_end_module.o \
-	objs/addon/src/http_module_callback.o \
+	objs/addon/src/http_module_customer_callback.o \
 	objs/addon/src/mysql_helper.o \
 	objs/addon/src/MySQLDBInstance.o \
 	objs/addon/src/MySQLQueryResult.o \
@@ -1237,11 +1237,11 @@ objs/addon/src/ngx_http_back_end_module.o:	$(ADDON_DEPS) \
 		../nginx_http_back_end/src/ngx_http_back_end_module.c
 
 
-objs/addon/src/http_module_callback.o:	$(ADDON_DEPS) \
-	../nginx_http_back_end/src/http_module_callback.c
+objs/addon/src/http_module_customer_callback.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/src/http_module_customer_callback.c
 	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
-		-o objs/addon/src/http_module_callback.o \
-		../nginx_http_back_end/src/http_module_callback.c
+		-o objs/addon/src/http_module_customer_callback.o \
+		../nginx_http_back_end/src/http_module_customer_callback.c
 
 
 objs/addon/src/mysql_helper.o:	$(ADDON_DEPS) \
