@@ -1,15 +1,18 @@
 #include "ngx_module.h"
 #include "ngx_http.h"
 #include "mysql_helper.h"
+#include "customer_backend_typedef.h"
 #include "http_module_customer_callback.h"
 
 static char* ngx_http_conf_set_callback(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_mysql_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_single_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static ngx_http_module_t ngx_http_module_ctx =
 {
 	NULL,//http_preconfiguration,
 	NULL,//http_postconfiguration,
-	NULL,//http_create_main_conf,
+	http_create_main_conf,
 	NULL,//http_init_main_conf,
 	NULL,//http_create_srv_conf,
 	NULL,//http_merge_srv_conf,
@@ -18,15 +21,38 @@ static ngx_http_module_t ngx_http_module_ctx =
 };
 
 static ngx_command_t  ngx_http_commands[] = {
+	
 	{ 
 		ngx_string("customer_manager"),
 		//配置项只能出现在location块中并且配置参数数量为1个
-		NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_NOARGS,
+		//NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_NOARGS,
 		ngx_http_conf_set_callback,
 		0,
 		0,
 		NULL 
+	},
+
+	{
+		ngx_string("test"),
+		//配置项只能出现在location块中并且配置参数数量为1个
+		//NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		ngx_http_get_single_conf,
+		0,
+		0,
+		NULL
+	},
+
+	{
+		ngx_string("mysql"),
+		//配置项只能出现在location块中并且配置参数数量为1个
+		//NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+		NGX_HTTP_MAIN_CONF | NGX_CONF_BLOCK | NGX_CONF_NOARGS,
+		ngx_http_get_mysql_conf,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
+		NULL
 	},
 
 	ngx_null_command
@@ -110,6 +136,8 @@ static char* ngx_http_conf_set_callback(ngx_conf_t *cf, ngx_command_t *cmd, void
 {
 	ngx_http_core_loc_conf_t *clcf;
 
+	printf("ngx_http_conf_set_callback...\n");
+
 	// 找到customer_manager配置项所属的配置块  
 	clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
 
@@ -117,5 +145,44 @@ static char* ngx_http_conf_set_callback(ngx_conf_t *cf, ngx_command_t *cmd, void
 	// 如果主机域名、URI和mytest模块所在配置块名称相同，就会调用函数ngx_http_mytest_handler  
 	clcf->handler = ngx_http_customer_manager_handler;
 
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_mysql_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	//ngx_http_cutomer_module_conf_t* local_conf = conf;
+	//char* rv = ngx_conf_set_str_slot(cf, cmd, conf);
+		//ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "host:%s", local_conf->hello_string.data);
+	
+	/* cf->args是1个ngx_array_t队列，它的成员都是ngx_str_t结构。我们用value指向ngx_array_t的elts内容，其中
+	value[1]就是第1个参数，同理，value[2]是第2个参数
+	*/
+
+	ngx_str_t *value = cf->args->elts;
+	printf("got mysql conf, args num=%lu,name=%s,value[0]=%s\n", cf->args->nelts, cf->name, value[3].data);
+	//// ngx_array_t的nelts表示参数的个数
+	//if (cf->args->nelts > 1)
+	//{
+	//	// 直接赋值即可，ngx_str_t结构只是指针的传递
+	//	mycf->my_config_str = value[1];
+	//}
+
+	//if (cf->args->nelts > 2)
+	//{
+	//	// 将字符串形式的第2个参数转为整型
+	//	mycf->my_config_num = ngx_atoi(value[2].data, value[2].len);
+	//	/*如果字符串转化整型失败，将报“invalid number”错误，Nginx启动失败*/
+	//	if (mycf->my_config_num == NGX_ERROR) {
+	//		return "invalid number";
+	//	}
+	//}
+
+	return NGX_CONF_OK;
+	//return rv;
+}
+
+static char* ngx_http_get_single_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+	printf("read a sinle file\n");
 	return NGX_CONF_OK;
 }

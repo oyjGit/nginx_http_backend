@@ -21,7 +21,20 @@ ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 void* http_create_main_conf(ngx_conf_t *cf)
 {
 	printf("http_create_main_conf...\n");
-	return NULL;
+	ngx_http_cutomer_module_conf_t* main_conf = NULL;
+	main_conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_cutomer_module_conf_t));
+	if (main_conf == NULL)
+	{
+		return NULL;
+	}
+
+	ngx_str_null(&(main_conf->mysql_info.host));
+	ngx_str_null(&(main_conf->mysql_info.db_name));
+	ngx_str_null(&(main_conf->mysql_info.user_name));
+	ngx_str_null(&(main_conf->mysql_info.user_pwd));
+	main_conf->mysql_info.port = 0;
+
+	return main_conf;
 }
 
 char* http_init_main_conf(ngx_conf_t *cf, void *conf)
