@@ -6,12 +6,16 @@
 
 static char* ngx_http_conf_set_callback(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static char* ngx_http_get_mysql_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-static char* ngx_http_get_single_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_mysql_host(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_mysql_port(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_mysql_user_name(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_mysql_user_pwd(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_mysql_db_name(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static ngx_http_module_t ngx_http_module_ctx =
 {
 	NULL,//http_preconfiguration,
-	NULL,//http_postconfiguration,
+	http_postconfiguration,
 	http_create_main_conf,
 	NULL,//http_init_main_conf,
 	NULL,//http_create_srv_conf,
@@ -34,22 +38,59 @@ static ngx_command_t  ngx_http_commands[] = {
 	},
 
 	{
-		ngx_string("test"),
-		//配置项只能出现在location块中并且配置参数数量为1个
-		//NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
-		ngx_http_get_single_conf,
-		0,
-		0,
+		ngx_string("mysql"),
+		NGX_HTTP_MAIN_CONF | NGX_CONF_BLOCK | NGX_CONF_NOARGS,
+		ngx_http_get_mysql_conf,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
 		NULL
 	},
 
 	{
-		ngx_string("mysql"),
-		//配置项只能出现在location块中并且配置参数数量为1个
-		//NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-		NGX_HTTP_MAIN_CONF | NGX_CONF_BLOCK | NGX_CONF_NOARGS,
-		ngx_http_get_mysql_conf,
+		ngx_string("mysql_host"),
+		NGX_HTTP_MAIN_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_mysql_host,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
+		NULL
+	},
+
+	{
+		ngx_string("mysql_port"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_mysql_port,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
+		NULL
+	},
+
+	{
+		ngx_string("mysql_user_name"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_mysql_user_name,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
+		NULL
+	},
+
+	{
+		ngx_string("mysql_user_pwd"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_mysql_user_pwd,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
+		NULL
+	},
+
+	{
+		ngx_string("mysql_db_name"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_mysql_db_name,
 		NGX_HTTP_MAIN_CONF_OFFSET,
 		offsetof(ngx_http_cutomer_module_conf_t, mysql_info),
 		NULL
@@ -150,39 +191,57 @@ static char* ngx_http_conf_set_callback(ngx_conf_t *cf, ngx_command_t *cmd, void
 
 static char* ngx_http_get_mysql_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
 {
-	//ngx_http_cutomer_module_conf_t* local_conf = conf;
-	//char* rv = ngx_conf_set_str_slot(cf, cmd, conf);
-		//ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "host:%s", local_conf->hello_string.data);
-	
-	/* cf->args是1个ngx_array_t队列，它的成员都是ngx_str_t结构。我们用value指向ngx_array_t的elts内容，其中
-	value[1]就是第1个参数，同理，value[2]是第2个参数
-	*/
-
-	ngx_str_t *value = cf->args->elts;
-	printf("got mysql conf, args num=%lu,name=%s,value[0]=%s\n", cf->args->nelts, cf->name, value[3].data);
-	//// ngx_array_t的nelts表示参数的个数
-	//if (cf->args->nelts > 1)
-	//{
-	//	// 直接赋值即可，ngx_str_t结构只是指针的传递
-	//	mycf->my_config_str = value[1];
-	//}
-
-	//if (cf->args->nelts > 2)
-	//{
-	//	// 将字符串形式的第2个参数转为整型
-	//	mycf->my_config_num = ngx_atoi(value[2].data, value[2].len);
-	//	/*如果字符串转化整型失败，将报“invalid number”错误，Nginx启动失败*/
-	//	if (mycf->my_config_num == NGX_ERROR) {
-	//		return "invalid number";
-	//	}
-	//}
-
+	ngx_conf_log_error(NGX_LOG_DEBUG, cf, 0, "find mysql conf block");
 	return NGX_CONF_OK;
-	//return rv;
 }
 
-static char* ngx_http_get_single_conf(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+static char* ngx_http_get_mysql_host(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-	printf("read a sinle file\n");
+	char  *p = conf;
+	ngx_str_t        *field, *value;
+	field = &(((mysql_connect_conf_t *)(p + cmd->offset))->host);
+	value = cf->args->elts;
+	*field = value[1];
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_mysql_port(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	char  *p = conf;
+	ngx_str_t        *value;
+	int16_t* field = &(((mysql_connect_conf_t *)(p + cmd->offset))->port);
+	value = cf->args->elts;
+	*field = ngx_atoi(value[1].data, value[1].len);
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_mysql_user_name(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	char  *p = conf;
+	ngx_str_t        *field, *value;
+	field = &(((mysql_connect_conf_t *)(p + cmd->offset))->user_name);
+	value = cf->args->elts;
+	*field = value[1];
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_mysql_user_pwd(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	char  *p = conf;
+	ngx_str_t        *field, *value;
+	field = &(((mysql_connect_conf_t *)(p + cmd->offset))->user_pwd);
+	value = cf->args->elts;
+	*field = value[1];
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_mysql_db_name(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	char  *p = conf;
+	ngx_str_t        *field, *value;
+	mysql_connect_conf_t* conn = (mysql_connect_conf_t *)(p + cmd->offset);
+	field = &(conn->db_name);
+	value = cf->args->elts;
+	*field = value[1];
 	return NGX_CONF_OK;
 }

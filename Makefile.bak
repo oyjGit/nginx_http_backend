@@ -1,7 +1,8 @@
 
 CC =	cc
 CXX = g++ --std=c++11 -DMYSQLPP_MYSQL_HEADERS_BURIED
-CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g 
+#CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g 
+CFLAGS =  -pipe  -O0 -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g 
 CPP =	cc -E
 LINK =	$(CXX)
 
