@@ -1,4 +1,4 @@
 ngx_addon_name=ngx_http_back_end_module
 HTTP_MODULES="$HTTP_MODULES ngx_http_back_end_module"
-NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/ngx_http_back_end_module.c $ngx_addon_dir/src/http_module_customer_callback.c $ngx_addon_dir/src/mysql_helper.cpp $ngx_addon_dir/src/MySQLDBInstance.cpp $ngx_addon_dir/src/MySQLQueryResult.cpp"
-CORE_LIBS="$CORE_LIBS -lmysqlpp -lmysqlclient"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/ngx_http_back_end_module.c $ngx_addon_dir/src/http_module_customer_callback.c $ngx_addon_dir/src/mysql_helper.cpp $ngx_addon_dir/src/MySQLDBInstance.cpp $ngx_addon_dir/src/MySQLQueryResult.cpp $ngx_addon_dir/src/RedisInstance.cpp $ngx_addon_dir/src/RedisUtil.cpp"
+CORE_LIBS="$CORE_LIBS -lmysqlpp -lmysqlclient -lhiredis"
