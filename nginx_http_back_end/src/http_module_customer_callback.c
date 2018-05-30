@@ -3,6 +3,7 @@
 #include "ngx_module.h"
 #include "ngx_http.h"
 #include "mysql_helper.h"
+#include "RedisUtil.h"
 #include <stdio.h>
 
 extern ngx_module_t ngx_http_back_end_module;
@@ -20,30 +21,48 @@ ngx_int_t http_preconfiguration(ngx_conf_t *cf)
 ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 {
 	ngx_http_cutomer_module_conf_t* ct = ngx_http_conf_get_module_main_conf(cf, ngx_http_back_end_module);
-	mysql_connect_conf_t* conn = &ct->mysql_info;
+	mysql_connect_conf_t* mysql = &ct->mysql_info;
+	redis_connect_conf_t* redis = &ct->redis_info;
 
 	fprintf(stderr, "got mysql info:\n\t\thost:%s\n\t\tport=%d\n\t\tuser_name:%s\n\t\tuser_pwd:%s\n\t\tdb_name:%s\n\t\t\n",
-		conn->host.data, conn->port, conn->user_name.data, conn->user_pwd.data, conn->db_name.data);
+		mysql->host.data, mysql->port, mysql->user_name.data, mysql->user_pwd.data, mysql->db_name.data);
 
-	if (conn->host.data == NULL || conn->user_name.data == NULL
-		|| conn->user_pwd.data == NULL || conn->db_name.data == NULL)
+	fprintf(stderr, "got redis info:\n\t\thost:%s\n\t\tport=%d\n\t\tpwd:%s\n", redis->host.data, redis->port, redis->pwd.data);
+
+	if (mysql->host.data == NULL || mysql->user_name.data == NULL
+		|| mysql->user_pwd.data == NULL || mysql->db_name.data == NULL)
 	{
 		return NGX_ERROR;
 	}
-	ct->mysql_client = connect_mysql_db((char*)(conn->host.data), conn->port, (char*)(conn->user_name.data), 
-										(char*)(conn->user_pwd.data), (char*)(conn->db_name.data));
+
+	if (redis->host.data == NULL || redis->pwd.data == NULL) 
+	{
+		return NGX_ERROR;
+	}
+
+	ct->mysql_client = connect_mysql_db((char*)(mysql->host.data), mysql->port, (char*)(mysql->user_name.data), 
+										(char*)(mysql->user_pwd.data), (char*)(mysql->db_name.data));
 
 	if (NULL == ct->mysql_client)
 	{
 		ngx_conf_log_error(NGX_LOG_DEBUG, cf, 0, "connect to mysql server failed");
 		return NGX_ERROR;
 	}
+
+	ct->redis_client = redis_connect((char*)redis->host.data, redis->port, (char*)redis->pwd.data);
+	if (NULL == ct->redis_client) 
+	{
+		disconnect_mysql_db(ct->mysql_client);
+		ngx_conf_log_error(NGX_LOG_DEBUG, cf, 0, "connect to redis server failed");
+		return NGX_ERROR;
+	}
+
 	return NGX_OK;
 }
 
 void* http_create_main_conf(ngx_conf_t *cf)
 {
-	printf("http_create_main_conf...\n");
+	fprintf(stderr, "http_create_main_conf...\n");
 	ngx_http_cutomer_module_conf_t* main_conf = NULL;
 	main_conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_cutomer_module_conf_t));
 	if (main_conf == NULL)
@@ -56,6 +75,10 @@ void* http_create_main_conf(ngx_conf_t *cf)
 	ngx_str_null(&(main_conf->mysql_info.user_name));
 	ngx_str_null(&(main_conf->mysql_info.user_pwd));
 	main_conf->mysql_info.port = 3306;
+
+	ngx_str_null(&(main_conf->redis_info.host));
+	ngx_str_null(&(main_conf->redis_info.pwd));
+	main_conf->redis_info.port = 6379;
 
 	return main_conf;
 }

@@ -1,6 +1,7 @@
 #include "ngx_module.h"
 #include "ngx_http.h"
 #include "mysql_helper.h"
+#include "RedisUtil.h"
 #include "customer_backend_typedef.h"
 #include "http_module_customer_callback.h"
 
@@ -11,6 +12,10 @@ static char* ngx_http_get_mysql_port(ngx_conf_t *cf, ngx_command_t *cmd, void *c
 static char* ngx_http_get_mysql_user_name(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static char* ngx_http_get_mysql_user_pwd(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static char* ngx_http_get_mysql_db_name(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+
+static char* ngx_http_get_redis_host(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_redis_pwd(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char* ngx_http_get_redis_port(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static char* ngx_http_set_login_call_back(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
@@ -88,6 +93,36 @@ static ngx_command_t  ngx_http_commands[] = {
 	},
 
 	{
+		ngx_string("redis_host"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_redis_host,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, redis_info),
+		NULL
+	},
+
+	{
+		ngx_string("redis_port"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_redis_port,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, redis_info),
+		NULL
+	},
+
+	{
+		ngx_string("redis_pwd"),
+		NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
+		//NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_CONF_ANY | NGX_CONF_TAKE1,
+		ngx_http_get_redis_pwd,
+		NGX_HTTP_MAIN_CONF_OFFSET,
+		offsetof(ngx_http_cutomer_module_conf_t, redis_info),
+		NULL
+	},
+
+	{
 		ngx_string("login"),
 		//配置项只能出现在location块中并且配置参数数量为1个
 		//NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
@@ -121,7 +156,7 @@ ngx_module_t ngx_http_back_end_module =
 
 static void ngx_http_customer_manager_login_handler(ngx_http_request_t *r)
 {
-
+	//ngx_http_cutomer_module_conf_t* cf = ngx_http_get_module_main_conf(r, ngx_http_back_end_module);
 }
 
 // 请求的所有信息都存入ngx_http_request_t结构体中  
@@ -135,7 +170,8 @@ static ngx_int_t ngx_http_customer_manager_login(ngx_http_request_t *r)
 	
 	ngx_int_t rc = ngx_http_read_client_request_body(r, ngx_http_customer_manager_login_handler);
 
-	if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+	if (rc >= NGX_HTTP_SPECIAL_RESPONSE) 
+	{
 		return rc;
 	}
 
@@ -242,5 +278,37 @@ static char* ngx_http_get_mysql_db_name(ngx_conf_t *cf, ngx_command_t *cmd, void
 	field = &(conn->db_name);
 	value = cf->args->elts;
 	*field = value[1];
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_redis_host(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	char  *p = conf;
+	ngx_str_t        *field, *value;
+	redis_connect_conf_t* conn = (redis_connect_conf_t *)(p + cmd->offset);
+	field = &(conn->host);
+	value = cf->args->elts;
+	*field = value[1];
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_redis_pwd(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+	char  *p = conf;
+	ngx_str_t        *field, *value;
+	redis_connect_conf_t* conn = (redis_connect_conf_t *)(p + cmd->offset);
+	field = &(conn->pwd);
+	value = cf->args->elts;
+	*field = value[1];
+	return NGX_CONF_OK;
+}
+
+static char* ngx_http_get_redis_port(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) 
+{
+	char  *p = conf;
+	ngx_str_t        *value;
+	int16_t* field = &(((redis_connect_conf_t *)(p + cmd->offset))->port);
+	value = cf->args->elts;
+	*field = ngx_atoi(value[1].data, value[1].len);
 	return NGX_CONF_OK;
 }

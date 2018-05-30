@@ -12,10 +12,20 @@ typedef struct mysql_connect_conf_s
 	int16_t port;
 }mysql_connect_conf_t;
 
+typedef struct redis_connect_conf_s 
+{
+	ngx_str_t host;
+	int16_t port;
+	ngx_str_t pwd;
+}redis_connect_conf_t;
+
 typedef struct cutomer_module_conf_s
 {
 	mysql_connect_conf_t	mysql_info;
 	void*					mysql_client;
+
+	redis_connect_conf_t	redis_info;
+	void*					redis_client;
 }ngx_http_cutomer_module_conf_t;
 
 #endif // !__CUSTOMER_BACKEND_H__
