@@ -1,0 +1,25 @@
+﻿生成启动时间为 2018/6/1 14:54:48。
+     1>项目“D:\slothjson-master\vs2010\slothjson.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I../include/rapidjson /I../include /I"C:\Program Files (x86)\Visual Leak Detector\include" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt ..\src\main.cpp
+         main.cpp
+     1>d:\slothjson-master\include\rapidjson\document.h(958): warning C4003: “max”宏的实参不足
+     1>d:\slothjson-master\include\rapidjson\document.h(964): warning C4003: “min”宏的实参不足
+     1>d:\slothjson-master\include\rapidjson\document.h(965): warning C4003: “max”宏的实参不足
+     1>d:\slothjson-master\include\rapidjson\document.h(982): warning C4003: “max”宏的实参不足
+     1>d:\slothjson-master\include\rapidjson\document.h(983): warning C4003: “max”宏的实参不足
+     1>d:\slothjson-master\src\main.cpp(299): warning C4477: 'printf' : format string '%ld' requires an argument of type 'long', but variadic argument 1 has type 'int64_t'
+         d:\slothjson-master\src\main.cpp(299): note: consider using '%lld' in the format string
+         d:\slothjson-master\src\main.cpp(299): note: consider using '%I64d' in the format string
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Y:\work\code\nginx_dev\nginx_http_backend\nginx_http_back_end\nginx_http_back_end_vs2015\Debug\slothjson.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Visual Leak Detector\lib\Win32" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"Y:\work\code\nginx_dev\nginx_http_backend\nginx_http_back_end\nginx_http_back_end_vs2015\Debug\slothjson.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Y:\work\code\nginx_dev\nginx_http_backend\nginx_http_back_end\nginx_http_back_end_vs2015\Debug\slothjson.lib" /MACHINE:X86 Debug\slothjson.obj
+         Debug\LoginBackParam.obj
+         Debug\main.obj
+         Debug\perf_test.obj
+         Debug\sample_test.obj
+         slothjson.vcxproj -> Y:\work\code\nginx_dev\nginx_http_backend\nginx_http_back_end\nginx_http_back_end_vs2015\Debug\slothjson.exe
+     1>已完成生成项目“D:\slothjson-master\vs2010\slothjson.vcxproj”(Build 个目标)的操作。
+
+已成功生成。
+
+已用时间 00:00:01.79

@@ -1,0 +1,15 @@
+{
+	"structs":
+	[
+		{
+			"type":"CUserInfo",
+			"members":
+			[
+				["int64_t", "id", "-1"],
+				["string", "name"],
+				["string", "nick_name"],
+				["string", "phone"]			
+			]
+		}
+	]
+}

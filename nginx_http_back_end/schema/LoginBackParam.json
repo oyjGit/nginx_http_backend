@@ -1,0 +1,15 @@
+{
+	"structs":
+	[
+		{
+			"type":"CLoginBackParam",
+			"members":
+			[
+				["int32_t", "code", "0"],
+				["string", "desc", "default desc value"],
+				["[CUserInfo]", "data"]
+				
+			]
+		}
+	]
+}

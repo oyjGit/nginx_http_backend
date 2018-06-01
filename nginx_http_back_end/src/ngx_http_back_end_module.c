@@ -157,6 +157,40 @@ ngx_module_t ngx_http_back_end_module =
 static void ngx_http_customer_manager_login_handler(ngx_http_request_t *r)
 {
 	//ngx_http_cutomer_module_conf_t* cf = ngx_http_get_module_main_conf(r, ngx_http_back_end_module);
+	//ngx_http_request_body_t* body = r->request_body;
+	
+	// 设置响应的HTTP头部
+	ngx_str_t response = { 5, (u_char*)"hello" };
+	r->headers_out.status = NGX_HTTP_OK;           // 返回的响应码
+	r->headers_out.content_length_n = response.len;    // 响应包体长度
+	ngx_str_set(&r->headers_out.content_type, "text/json");
+	// 如果响应不包含包体，则在此处可以直接返回rc  
+	ngx_int_t rc = ngx_http_send_header(r); // 发送HTTP头部
+	if (rc == NGX_ERROR || rc > NGX_OK || r->header_only)
+	{
+		ngx_http_finalize_request(r, rc);
+		return;
+	}
+	
+	// 分配响应包体空间，因为是异步发送，所以不要从栈中获得空间
+	ngx_buf_t *b = ngx_create_temp_buf(r->pool, response.len);
+	if (b == NULL)
+	{
+		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+		return;
+	}
+
+	ngx_memcpy(b->pos, response.data, response.len);
+	b->last = b->pos + response.len;  // 指向数据末尾
+	b->last_buf = 1;                    // 声明这是最后一块缓冲区
+
+	ngx_chain_t out;
+	out.buf = b;
+	out.next = NULL;
+	rc = ngx_http_output_filter(r, &out);   // 向用户发送响应包  
+
+	//必须调用ngx_http_finalize_request
+	ngx_http_finalize_request(r, rc);
 }
 
 // 请求的所有信息都存入ngx_http_request_t结构体中  
@@ -218,7 +252,7 @@ static char* ngx_http_set_login_call_back(ngx_conf_t *cf, ngx_command_t *cmd, vo
 	clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
 
 	// 设置处理请求的方法，HTTP框架在处理用户请求进行到NGX_HTTP_CONTENT_PHASE阶段时  
-	// 如果主机域名、URI和mytest模块所在配置块名称相同，就会调用函数ngx_http_mytest_handler  
+	// 如果主机域名、URI和mytest模块所在配置块名称相同，就会调用函数ngx_http_mytest_handler 
 	clcf->handler = ngx_http_customer_manager_login;
 
 	return NGX_CONF_OK;

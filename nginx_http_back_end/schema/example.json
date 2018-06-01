@@ -1,0 +1,19 @@
+{
+    "structs": 
+    [
+        {
+            "type": "fxxx_gfw_t",
+            "members": 
+            [
+                ["bool", "bool_val", "true"],
+                ["int8_t", "int8_val", "'a'"],
+                ["int32_t", "int32_val", "-111111"],
+                ["uint64_t", "uint64_val", "0xffff"],
+                ["double", "double_val", "111111.111111"],
+                ["string", "str_val", "test"],
+                ["[int32_t]", "vec_val"],
+                ["{string}", "dict_val"]
+            ]
+        }
+    ]
+}
