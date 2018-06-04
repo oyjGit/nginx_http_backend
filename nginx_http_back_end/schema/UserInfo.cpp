@@ -4,7 +4,7 @@
 #include "UserInfo.h"
 
 
-CUserInfo::CUserInfo()
+UserInfo::UserInfo()
 {
     id = -1;
     __skip_id = false;
@@ -20,7 +20,7 @@ CUserInfo::CUserInfo()
     __json_has_phone = false;
 }
 
-CUserInfo& CUserInfo::operator=(const CUserInfo& obj_val)
+UserInfo& UserInfo::operator=(const UserInfo& obj_val)
 {
     this->id = obj_val.id;
     this->name = obj_val.name;
@@ -29,7 +29,7 @@ CUserInfo& CUserInfo::operator=(const CUserInfo& obj_val)
     return *this;
 }
 
-bool CUserInfo::operator==(const CUserInfo& obj_val) const
+bool UserInfo::operator==(const UserInfo& obj_val) const
 {
     if (!(this->id == obj_val.id)) return false;
     if (!(this->name == obj_val.name)) return false;
@@ -38,7 +38,7 @@ bool CUserInfo::operator==(const CUserInfo& obj_val) const
     return true;
 }
 
-bool CUserInfo::encode(allocator_t& alloc, rapidjson::Value& json_val) const
+bool UserInfo::encode(allocator_t& alloc, rapidjson::Value& json_val) const
 {
     do
     {
@@ -54,7 +54,7 @@ bool CUserInfo::encode(allocator_t& alloc, rapidjson::Value& json_val) const
     return false;
 }
 
-bool CUserInfo::decode(const rapidjson::Value& json_val)
+bool UserInfo::decode(const rapidjson::Value& json_val)
 {
     do
     {
@@ -69,12 +69,12 @@ bool CUserInfo::decode(const rapidjson::Value& json_val)
     return false;
 }
 
-bool encode(const CUserInfo& obj_val, allocator_t& alloc, rapidjson::Value& json_val)
+bool encode(const UserInfo& obj_val, allocator_t& alloc, rapidjson::Value& json_val)
 {
     return obj_val.encode(alloc, json_val);
 }
 
-bool decode(const rapidjson::Value& json_val, CUserInfo& obj_val)
+bool decode(const rapidjson::Value& json_val, UserInfo& obj_val)
 {
     return obj_val.decode(json_val);
 }

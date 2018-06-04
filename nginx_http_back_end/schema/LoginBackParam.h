@@ -5,14 +5,15 @@
 #define __loginbackparam_20180601165154_h__
 
 #include "slothjson.h"
+#include "UserInfo.h"
 
 using namespace slothjson;
 
-struct CLoginBackParam
+struct LoginBackParam
 {
     int32_t code;
     std::string desc;
-    std::vector<CUserInfo > data;
+    std::vector<UserInfo > data;
 
     void skip_code() { __skip_code = true; }
     void skip_desc() { __skip_desc = true; }
@@ -22,9 +23,9 @@ struct CLoginBackParam
     bool json_has_desc() const { return __json_has_desc; }
     bool json_has_data() const { return __json_has_data; }
 
-    CLoginBackParam();
-    CLoginBackParam& operator=(const CLoginBackParam& obj_val);
-    bool operator==(const CLoginBackParam& obj_val) const;
+    LoginBackParam();
+    LoginBackParam& operator=(const LoginBackParam& obj_val);
+    bool operator==(const LoginBackParam& obj_val) const;
     bool encode(allocator_t& alloc, rapidjson::Value& json_val) const;
     bool decode(const rapidjson::Value& json_val);
 
@@ -38,8 +39,8 @@ private:
     bool __json_has_data;
 };
 
-bool encode(const CLoginBackParam& obj_val, allocator_t& alloc, rapidjson::Value& json_val);
-bool decode(const rapidjson::Value& json_val, CLoginBackParam& obj_val);
+bool encode(const LoginBackParam& obj_val, allocator_t& alloc, rapidjson::Value& json_val);
+bool decode(const rapidjson::Value& json_val, LoginBackParam& obj_val);
 
 
 #endif // __loginbackparam_20180601165154_h__

@@ -1,4 +1,16 @@
 ngx_addon_name=ngx_http_back_end_module
 HTTP_MODULES="$HTTP_MODULES ngx_http_back_end_module"
-NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/ngx_http_back_end_module.c $ngx_addon_dir/src/http_module_customer_callback.c $ngx_addon_dir/src/mysql_helper.cpp $ngx_addon_dir/src/MySQLDBInstance.cpp $ngx_addon_dir/src/MySQLQueryResult.cpp $ngx_addon_dir/src/RedisInstance.cpp $ngx_addon_dir/src/RedisUtil.cpp"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/ngx_http_back_end_module.c $ngx_addon_dir/src/http_module_customer_callback.c  
+		$ngx_addon_dir/src/mysql_helper.cpp
+		$ngx_addon_dir/src/MySQLDBInstance.cpp
+		$ngx_addon_dir/src/MySQLQueryResult.cpp
+		$ngx_addon_dir/src/RedisInstance.cpp
+		$ngx_addon_dir/src/RedisUtil.cpp
+		$ngx_addon_dir/../slothjson-master/include/slothjson.cpp
+		$ngx_addon_dir/schema/UserInfo.cpp
+		$ngx_addon_dir/schema/LoginBackParam.cpp
+		$ngx_addon_dir/schema/LoginParam.cpp "
+
 CORE_LIBS="$CORE_LIBS -lmysqlpp -lmysqlclient -lhiredis"
+#NGX_ADDON_DEPS="$NGX_ADDON_DEPS -I$ngx_addon_dir/schema"
+CORE_INCS="$CORE_INCS $ngx_addon_dir/schema $ngx_addon_dir/../slothjson-master/include $ngx_addon_dir/../slothjson-master/include/rapidjson"

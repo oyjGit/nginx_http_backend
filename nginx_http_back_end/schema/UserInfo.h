@@ -8,7 +8,7 @@
 
 using namespace slothjson;
 
-struct CUserInfo
+struct UserInfo
 {
     int64_t id;
     std::string name;
@@ -25,9 +25,9 @@ struct CUserInfo
     bool json_has_nick_name() const { return __json_has_nick_name; }
     bool json_has_phone() const { return __json_has_phone; }
 
-    CUserInfo();
-    CUserInfo& operator=(const CUserInfo& obj_val);
-    bool operator==(const CUserInfo& obj_val) const;
+    UserInfo();
+    UserInfo& operator=(const UserInfo& obj_val);
+    bool operator==(const UserInfo& obj_val) const;
     bool encode(allocator_t& alloc, rapidjson::Value& json_val) const;
     bool decode(const rapidjson::Value& json_val);
 
@@ -43,8 +43,8 @@ private:
     bool __json_has_phone;
 };
 
-bool encode(const CUserInfo& obj_val, allocator_t& alloc, rapidjson::Value& json_val);
-bool decode(const rapidjson::Value& json_val, CUserInfo& obj_val);
+bool encode(const UserInfo& obj_val, allocator_t& alloc, rapidjson::Value& json_val);
+bool decode(const rapidjson::Value& json_val, UserInfo& obj_val);
 
 
 #endif // __userinfo_20180601161551_h__

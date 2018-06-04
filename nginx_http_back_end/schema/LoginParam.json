@@ -1,0 +1,12 @@
+{
+    "structs": 
+    [
+        {
+            "type": "LoginParam",
+            "members": 
+            [
+                ["string", "code"]
+            ]
+        }
+    ]
+}

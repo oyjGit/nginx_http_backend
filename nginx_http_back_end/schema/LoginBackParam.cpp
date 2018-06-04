@@ -4,7 +4,7 @@
 #include "LoginBackParam.h"
 
 
-CLoginBackParam::CLoginBackParam()
+LoginBackParam::LoginBackParam()
 {
     code = 0;
     __skip_code = false;
@@ -18,7 +18,7 @@ CLoginBackParam::CLoginBackParam()
     __json_has_data = false;
 }
 
-CLoginBackParam& CLoginBackParam::operator=(const CLoginBackParam& obj_val)
+LoginBackParam& LoginBackParam::operator=(const LoginBackParam& obj_val)
 {
     this->code = obj_val.code;
     this->desc = obj_val.desc;
@@ -26,7 +26,7 @@ CLoginBackParam& CLoginBackParam::operator=(const CLoginBackParam& obj_val)
     return *this;
 }
 
-bool CLoginBackParam::operator==(const CLoginBackParam& obj_val) const
+bool LoginBackParam::operator==(const LoginBackParam& obj_val) const
 {
     if (!(this->code == obj_val.code)) return false;
     if (!(this->desc == obj_val.desc)) return false;
@@ -34,7 +34,7 @@ bool CLoginBackParam::operator==(const CLoginBackParam& obj_val) const
     return true;
 }
 
-bool CLoginBackParam::encode(allocator_t& alloc, rapidjson::Value& json_val) const
+bool LoginBackParam::encode(allocator_t& alloc, rapidjson::Value& json_val) const
 {
     do
     {
@@ -49,7 +49,7 @@ bool CLoginBackParam::encode(allocator_t& alloc, rapidjson::Value& json_val) con
     return false;
 }
 
-bool CLoginBackParam::decode(const rapidjson::Value& json_val)
+bool LoginBackParam::decode(const rapidjson::Value& json_val)
 {
     do
     {
@@ -63,12 +63,12 @@ bool CLoginBackParam::decode(const rapidjson::Value& json_val)
     return false;
 }
 
-bool encode(const CLoginBackParam& obj_val, allocator_t& alloc, rapidjson::Value& json_val)
+bool encode(const LoginBackParam& obj_val, allocator_t& alloc, rapidjson::Value& json_val)
 {
     return obj_val.encode(alloc, json_val);
 }
 
-bool decode(const rapidjson::Value& json_val, CLoginBackParam& obj_val)
+bool decode(const rapidjson::Value& json_val, LoginBackParam& obj_val)
 {
     return obj_val.decode(json_val);
 }

@@ -11,7 +11,9 @@ ALL_INCS = -I src/core \
 	-I src/event \
 	-I src/event/modules \
 	-I src/os/unix \
-	-I ../openssl-1.1.1-pre6/.openssl/include \
+	-I ../nginx_http_back_end/schema \
+	-I ../nginx_http_back_end/../slothjson-master/include \
+	-I ../nginx_http_back_end/../slothjson-master/include/rapidjson \
 	-I objs \
 	-I src/http \
 	-I src/http/modules
@@ -78,7 +80,6 @@ CORE_DEPS = src/core/nginx.h \
 	src/os/unix/ngx_linux.h \
 	src/event/ngx_event_openssl.h \
 	src/core/ngx_regex.h \
-	../openssl-1.1.1-pre6/.openssl/include/openssl/ssl.h \
 	objs/ngx_auto_config.h
 
 
@@ -86,7 +87,9 @@ CORE_INCS = -I src/core \
 	-I src/event \
 	-I src/event/modules \
 	-I src/os/unix \
-	-I ../openssl-1.1.1-pre6/.openssl/include \
+	-I ../nginx_http_back_end/schema \
+	-I ../nginx_http_back_end/../slothjson-master/include \
+	-I ../nginx_http_back_end/../slothjson-master/include/rapidjson \
 	-I objs
 
 
@@ -242,6 +245,10 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/src/MySQLQueryResult.o \
 	objs/addon/src/RedisInstance.o \
 	objs/addon/src/RedisUtil.o \
+	objs/addon/include/slothjson.o \
+	objs/addon/schema/UserInfo.o \
+	objs/addon/schema/LoginBackParam.o \
+	objs/addon/schema/LoginParam.o \
 	objs/ngx_modules.o
 
 	$(LINK) -o objs/nginx \
@@ -373,8 +380,12 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/src/MySQLQueryResult.o \
 	objs/addon/src/RedisInstance.o \
 	objs/addon/src/RedisUtil.o \
+	objs/addon/include/slothjson.o \
+	objs/addon/schema/UserInfo.o \
+	objs/addon/schema/LoginBackParam.o \
+	objs/addon/schema/LoginParam.o \
 	objs/ngx_modules.o \
-	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -lpcre ../openssl-1.1.1-pre6/.openssl/lib/libssl.a ../openssl-1.1.1-pre6/.openssl/lib/libcrypto.a -ldl -lz -lpthread \
+	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -lpcre -lssl -lcrypto -ldl -lz -lpthread \
 	-Wl,-E
 	
 
@@ -1269,11 +1280,13 @@ objs/addon/src/MySQLQueryResult.o:	$(ADDON_DEPS) \
 		-o objs/addon/src/MySQLQueryResult.o \
 		../nginx_http_back_end/src/MySQLQueryResult.cpp
 
+
 objs/addon/src/RedisInstance.o:	$(ADDON_DEPS) \
 	../nginx_http_back_end/src/RedisInstance.cpp
 	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
 		-o objs/addon/src/RedisInstance.o \
 		../nginx_http_back_end/src/RedisInstance.cpp
+
 
 objs/addon/src/RedisUtil.o:	$(ADDON_DEPS) \
 	../nginx_http_back_end/src/RedisUtil.cpp
@@ -1281,12 +1294,33 @@ objs/addon/src/RedisUtil.o:	$(ADDON_DEPS) \
 		-o objs/addon/src/RedisUtil.o \
 		../nginx_http_back_end/src/RedisUtil.cpp
 
-../openssl-1.1.1-pre6/.openssl/include/openssl/ssl.h:	objs/Makefile
-	cd ../openssl-1.1.1-pre6 \
-	&& if [ -f Makefile ]; then $(MAKE) clean; fi \
-	&& ./config --prefix=/home/ouyangjie/work/code/nginx_dev/nginx_http_backend/nginx-master/../openssl-1.1.1-pre6/.openssl no-shared  \
-	&& $(MAKE) \
-	&& $(MAKE) install_sw LIBDIR=lib
+
+objs/addon/include/slothjson.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/../slothjson-master/include/slothjson.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/include/slothjson.o \
+		../nginx_http_back_end/../slothjson-master/include/slothjson.cpp
+
+
+objs/addon/schema/UserInfo.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/schema/UserInfo.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/schema/UserInfo.o \
+		../nginx_http_back_end/schema/UserInfo.cpp
+
+
+objs/addon/schema/LoginBackParam.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/schema/LoginBackParam.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/schema/LoginBackParam.o \
+		../nginx_http_back_end/schema/LoginBackParam.cpp
+
+
+objs/addon/schema/LoginParam.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/schema/LoginParam.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/schema/LoginParam.o \
+		../nginx_http_back_end/schema/LoginParam.cpp
 
 
 manpage:	objs/nginx.8
