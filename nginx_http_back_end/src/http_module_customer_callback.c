@@ -1,12 +1,10 @@
 #include "http_module_customer_callback.h"
 #include "customer_backend_typedef.h"
-#include "ngx_module.h"
-#include "ngx_http.h"
 #include "mysql_helper.h"
 #include "RedisUtil.h"
+#include "ngx_http_back_end_module.h"
 #include <stdio.h>
 
-extern ngx_module_t ngx_http_back_end_module;
 
 #ifdef __cplusplus
 extern "C"{
@@ -23,6 +21,7 @@ ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 	ngx_http_cutomer_module_conf_t* ct = ngx_http_conf_get_module_main_conf(cf, ngx_http_back_end_module);
 	mysql_connect_conf_t* mysql = &ct->mysql_info;
 	redis_connect_conf_t* redis = &ct->redis_info;
+	wx_backend_info_t* wx_info = &ct->wx_backend_info;
 
 	fprintf(stderr, "got mysql info:\n\t\thost:%s\n\t\tport=%d\n\t\tuser_name:%s\n\t\tuser_pwd:%s\n\t\tdb_name:%s\n\t\t\n",
 		mysql->host.data, mysql->port, mysql->user_name.data, mysql->user_pwd.data, mysql->db_name.data);
@@ -36,6 +35,11 @@ ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 	}
 
 	if (redis->host.data == NULL || redis->pwd.data == NULL) 
+	{
+		return NGX_ERROR;
+	}
+
+	if (wx_info->app_id.data == NULL || wx_info->secret.data == NULL) 
 	{
 		return NGX_ERROR;
 	}
@@ -79,6 +83,9 @@ void* http_create_main_conf(ngx_conf_t *cf)
 	ngx_str_null(&(main_conf->redis_info.host));
 	ngx_str_null(&(main_conf->redis_info.pwd));
 	main_conf->redis_info.port = 6379;
+
+	ngx_str_null(&(main_conf->wx_backend_info.app_id));
+	ngx_str_null(&(main_conf->wx_backend_info.secret));
 
 	return main_conf;
 }

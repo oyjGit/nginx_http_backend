@@ -1,0 +1,14 @@
+{
+    "structs": 
+    [
+        {
+            "type": "WXSessionInfo",
+            "members": 
+            [
+                ["string", "session_key"],
+                ["int32_t", "expires_in"],
+                ["string", "openid"]
+            ]
+        }
+    ]
+}

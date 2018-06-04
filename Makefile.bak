@@ -245,10 +245,12 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/src/MySQLQueryResult.o \
 	objs/addon/src/RedisInstance.o \
 	objs/addon/src/RedisUtil.o \
+	objs/addon/src/Login.o \
 	objs/addon/include/slothjson.o \
 	objs/addon/schema/UserInfo.o \
 	objs/addon/schema/LoginBackParam.o \
 	objs/addon/schema/LoginParam.o \
+	objs/addon/schema/WXSessionInfo.o \
 	objs/ngx_modules.o
 
 	$(LINK) -o objs/nginx \
@@ -380,10 +382,12 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/src/MySQLQueryResult.o \
 	objs/addon/src/RedisInstance.o \
 	objs/addon/src/RedisUtil.o \
+	objs/addon/src/Login.o \
 	objs/addon/include/slothjson.o \
 	objs/addon/schema/UserInfo.o \
 	objs/addon/schema/LoginBackParam.o \
 	objs/addon/schema/LoginParam.o \
+	objs/addon/schema/WXSessionInfo.o \
 	objs/ngx_modules.o \
 	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -lpcre -lssl -lcrypto -ldl -lz -lpthread \
 	-Wl,-E
@@ -1294,6 +1298,11 @@ objs/addon/src/RedisUtil.o:	$(ADDON_DEPS) \
 		-o objs/addon/src/RedisUtil.o \
 		../nginx_http_back_end/src/RedisUtil.cpp
 
+objs/addon/src/Login.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/src/Login.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/Login.o \
+		../nginx_http_back_end/src/Login.cpp
 
 objs/addon/include/slothjson.o:	$(ADDON_DEPS) \
 	../nginx_http_back_end/../slothjson-master/include/slothjson.cpp
@@ -1322,6 +1331,12 @@ objs/addon/schema/LoginParam.o:	$(ADDON_DEPS) \
 		-o objs/addon/schema/LoginParam.o \
 		../nginx_http_back_end/schema/LoginParam.cpp
 
+
+objs/addon/schema/LoginParam.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/schema/WXSessionInfo.cpp
+	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/schema/WXSessionInfo.o \
+		../nginx_http_back_end/schema/WXSessionInfo.cpp
 
 manpage:	objs/nginx.8
 

@@ -6,10 +6,12 @@ NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/src/ngx_http_back_end_module.c $n
 		$ngx_addon_dir/src/MySQLQueryResult.cpp
 		$ngx_addon_dir/src/RedisInstance.cpp
 		$ngx_addon_dir/src/RedisUtil.cpp
+		$ngx_addon_dir/src/Login.cpp
 		$ngx_addon_dir/../slothjson-master/include/slothjson.cpp
 		$ngx_addon_dir/schema/UserInfo.cpp
 		$ngx_addon_dir/schema/LoginBackParam.cpp
-		$ngx_addon_dir/schema/LoginParam.cpp "
+		$ngx_addon_dir/schema/LoginParam.cpp  
+		$ngx_addon_dir/schema/WXSessionInfo.cpp " 
 
 CORE_LIBS="$CORE_LIBS -lmysqlpp -lmysqlclient -lhiredis"
 #NGX_ADDON_DEPS="$NGX_ADDON_DEPS -I$ngx_addon_dir/schema"
