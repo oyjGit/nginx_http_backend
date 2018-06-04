@@ -9,27 +9,32 @@ WXSessionInfo::WXSessionInfo()
     __skip_session_key = false;
     __json_has_session_key = false;
 
+    __skip_openid = false;
+    __json_has_openid = false;
+
+    __skip_unionid = false;
+    __json_has_unionid = false;
+
     expires_in = 0;
     __skip_expires_in = false;
     __json_has_expires_in = false;
-
-    __skip_openid = false;
-    __json_has_openid = false;
 }
 
 WXSessionInfo& WXSessionInfo::operator=(const WXSessionInfo& obj_val)
 {
     this->session_key = obj_val.session_key;
-    this->expires_in = obj_val.expires_in;
     this->openid = obj_val.openid;
+    this->unionid = obj_val.unionid;
+    this->expires_in = obj_val.expires_in;
     return *this;
 }
 
 bool WXSessionInfo::operator==(const WXSessionInfo& obj_val) const
 {
     if (!(this->session_key == obj_val.session_key)) return false;
-    if (!(this->expires_in == obj_val.expires_in)) return false;
     if (!(this->openid == obj_val.openid)) return false;
+    if (!(this->unionid == obj_val.unionid)) return false;
+    if (!(this->expires_in == obj_val.expires_in)) return false;
     return true;
 }
 
@@ -39,8 +44,9 @@ bool WXSessionInfo::encode(allocator_t& alloc, rapidjson::Value& json_val) const
     {
         json_val.SetObject();
         if (!__skip_session_key && !encode_field(session_key, "session_key", alloc, json_val)) break;
-        if (!__skip_expires_in && !encode_field(expires_in, "expires_in", alloc, json_val)) break;
         if (!__skip_openid && !encode_field(openid, "openid", alloc, json_val)) break;
+        if (!__skip_unionid && !encode_field(unionid, "unionid", alloc, json_val)) break;
+        if (!__skip_expires_in && !encode_field(expires_in, "expires_in", alloc, json_val)) break;
 
         return true;
     } while (0);
@@ -53,8 +59,9 @@ bool WXSessionInfo::decode(const rapidjson::Value& json_val)
     do
     {
         if (!decode_field(json_val, "session_key", session_key, __json_has_session_key)) break;
-        if (!decode_field(json_val, "expires_in", expires_in, __json_has_expires_in)) break;
         if (!decode_field(json_val, "openid", openid, __json_has_openid)) break;
+        if (!decode_field(json_val, "unionid", unionid, __json_has_unionid)) break;
+        if (!decode_field(json_val, "expires_in", expires_in, __json_has_expires_in)) break;
 
         return true;
     } while (0);

@@ -26,7 +26,9 @@ ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 	fprintf(stderr, "got mysql info:\n\t\thost:%s\n\t\tport=%d\n\t\tuser_name:%s\n\t\tuser_pwd:%s\n\t\tdb_name:%s\n\t\t\n",
 		mysql->host.data, mysql->port, mysql->user_name.data, mysql->user_pwd.data, mysql->db_name.data);
 
-	fprintf(stderr, "got redis info:\n\t\thost:%s\n\t\tport=%d\n\t\tpwd:%s\n", redis->host.data, redis->port, redis->pwd.data);
+	fprintf(stderr, "got redis info:\n\t\thost:%s\n\t\tport=%d\n\t\tpwd:%s\n\n", redis->host.data, redis->port, redis->pwd.data);
+
+	fprintf(stderr, "got wx app info:\n\t\tapp id:%s\n\t\tsecret=%s\n\t\t\n\n", wx_info->app_id.data, wx_info->secret.data);
 
 	if (mysql->host.data == NULL || mysql->user_name.data == NULL
 		|| mysql->user_pwd.data == NULL || mysql->db_name.data == NULL)

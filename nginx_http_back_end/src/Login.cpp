@@ -63,29 +63,15 @@ static ngx_int_t wx_login_subrequest_post_handler(ngx_http_request_t *r, void *d
 		ngx_str_t bak = { (size_t)(r->upstream->buffer.last - r->upstream->buffer.pos), r->upstream->buffer.pos };
 		WXSessionInfo info;
 		std::string backStr = (const char*)bak.data;
-		//slothjson::decode(backStr, info);
-		//int flag = 0;
-		//ngx_buf_t* pRecvBuf = &r->upstream->buffer;
-		///*内容解析到stock数组中*/
-		//for (; pRecvBuf->pos != pRecvBuf->last; pRecvBuf->pos++)
-		//{
-		//	if (*pRecvBuf->pos == ',' || *pRecvBuf->pos == '\"')
-		//	{
-		//		if (flag > 0)
-		//		{
-		//			myctx->stock[flag - 1].len = pRecvBuf->pos - myctx->stock[flag - 1].data;
-		//		}
-		//		flag++;
-		//		myctx->stock[flag - 1].data = pRecvBuf->pos + 1;
-		//	}
-		//	if (flag > 6)
-		//		break;
-		//}
-		printf("get data from wx success, data=%s\n",backStr.c_str());
+		if (!decode<WXSessionInfo>(backStr, info))
+		{
+			ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "get data from wx success, but parse json failed, json value=%s\n", backStr.c_str());
+			pr->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
+		}
+		ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "get data from wx success, id=%s, session_key=%s\n", info.openid.c_str(), info.session_key.c_str());
 	}
 	/*设置父请求的回调方法*/
 	pr->write_event_handler = wx_login_subrequest_post_father_handler;
-
 	return NGX_OK;
 }
 
@@ -105,7 +91,19 @@ static void ngx_http_customer_manager_login_handler(ngx_http_request_t *r)
 
 	LoginParam codeObj;
 	std::string codeJson = (const char*)body_content.data;
-	decode(codeJson, codeObj);
+	if (!decode<LoginParam>(codeJson, codeObj))
+	{
+		ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "parse login param json failed, data=%s", (const char*)codeJson.c_str());
+		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+		return;
+	}
+
+	if (codeObj.code.empty())
+	{
+		ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "parse login param json got code is empty");
+		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+		return;
+	}
 
 	/*子请求的回调方法将在此结构体中设置*/
 	ngx_http_post_subrequest_t *psr = (ngx_http_post_subrequest_t*)ngx_palloc(r->pool, sizeof(ngx_http_post_subrequest_t));
@@ -119,7 +117,7 @@ static void ngx_http_customer_manager_login_handler(ngx_http_request_t *r)
 	/*构造子请求*/
 	/*URL构造=前缀+参数*/
 	static ngx_str_t sub_location = ngx_string("/wxMiniBuyPhone/login");
-	static ngx_str_t app_id_str = ngx_string("?appid=");
+	static ngx_str_t app_id_str = ngx_string("appid=");
 	static ngx_str_t app_secret_str = ngx_string("&secret=");
 	static ngx_str_t app_code_str = ngx_string("&js_code=");
 	static ngx_str_t app_type_str = ngx_string("&grant_type=authorization_code");

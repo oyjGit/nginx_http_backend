@@ -6,8 +6,9 @@
             "members": 
             [
                 ["string", "session_key"],
-                ["int32_t", "expires_in"],
-                ["string", "openid"]
+                ["string", "openid"],
+                ["string", "unionid"],
+		["int32_t", "expires_in"]
             ]
         }
     ]
