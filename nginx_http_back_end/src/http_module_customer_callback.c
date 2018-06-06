@@ -55,13 +55,13 @@ ngx_int_t http_postconfiguration(ngx_conf_t *cf)
 		return NGX_ERROR;
 	}
 
-	ct->redis_client = redis_connect((char*)redis->host.data, redis->port, (char*)redis->pwd.data);
+	/*ct->redis_client = redis_connect((char*)redis->host.data, redis->port, (char*)redis->pwd.data);
 	if (NULL == ct->redis_client) 
 	{
 		disconnect_mysql_db(ct->mysql_client);
 		ngx_conf_log_error(NGX_LOG_DEBUG, cf, 0, "connect to redis server failed");
 		return NGX_ERROR;
-	}
+	}*/
 
 	return NGX_OK;
 }
