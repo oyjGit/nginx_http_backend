@@ -2,12 +2,12 @@
 	"structs":
 	[
 		{
-			"type":"CLoginBackParam",
+			"type":"LoginBackParam",
 			"members":
 			[
-				["int32_t", "code", "0"],
-				["string", "desc", "default desc value"],
-				["[CUserInfo]", "data"]
+				["int32_t", "expire", "0"],
+				["string", "session_id"],
+				["string","openid"]
 				
 			]
 		}

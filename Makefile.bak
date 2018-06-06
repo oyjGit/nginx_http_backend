@@ -240,6 +240,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_stub_status_module.o \
 	objs/addon/src/ngx_http_back_end_module.o \
 	objs/addon/src/http_module_customer_callback.o \
+	objs/addon/src/sys_util.o \
 	objs/addon/src/mysql_helper.o \
 	objs/addon/src/MySQLDBInstance.o \
 	objs/addon/src/MySQLQueryResult.o \
@@ -377,6 +378,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/src/http/modules/ngx_http_stub_status_module.o \
 	objs/addon/src/ngx_http_back_end_module.o \
 	objs/addon/src/http_module_customer_callback.o \
+	objs/addon/src/sys_util.o \
 	objs/addon/src/mysql_helper.o \
 	objs/addon/src/MySQLDBInstance.o \
 	objs/addon/src/MySQLQueryResult.o \
@@ -1264,6 +1266,12 @@ objs/addon/src/http_module_customer_callback.o:	$(ADDON_DEPS) \
 		../nginx_http_back_end/src/http_module_customer_callback.c
 
 
+objs/addon/src/sys_util.o:	$(ADDON_DEPS) \
+	../nginx_http_back_end/src/sys_util.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/sys_util.o \
+		../nginx_http_back_end/src/sys_util.c
+
 objs/addon/src/mysql_helper.o:	$(ADDON_DEPS) \
 	../nginx_http_back_end/src/mysql_helper.cpp
 	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
@@ -1332,7 +1340,7 @@ objs/addon/schema/LoginParam.o:	$(ADDON_DEPS) \
 		../nginx_http_back_end/schema/LoginParam.cpp
 
 
-objs/addon/schema/LoginParam.o:	$(ADDON_DEPS) \
+objs/addon/schema/WXSessionInfo.o:	$(ADDON_DEPS) \
 	../nginx_http_back_end/schema/WXSessionInfo.cpp
 	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
 		-o objs/addon/schema/WXSessionInfo.o \

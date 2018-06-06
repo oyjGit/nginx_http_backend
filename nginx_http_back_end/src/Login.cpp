@@ -2,6 +2,7 @@
 #include "LoginParam.h"
 #include "WXSessionInfo.h"
 #include "ngx_http_back_end_module.h"
+#include "sys_util.h"
 
 #ifdef __cplusplus
 extern "C"{
@@ -14,6 +15,22 @@ static void wx_login_subrequest_post_father_handler(ngx_http_request_t * r)
 	if (r->headers_out.status != NGX_HTTP_OK)
 	{
 		ngx_http_finalize_request(r, r->headers_out.status);
+		return;
+	}
+
+	char sessionID[SESSION_ID_LEN]{0};
+	if (0 != get_random_id(sessionID, SESSION_ID_LEN)) 
+	{
+		ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "generate session id failed\n");
+		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+		return;
+	}
+
+	char sessionIDBase64[SESSION_ID_BASE64_LEN + 1]{0};
+	if (base64_encode(sessionID, SESSION_ID_LEN, sessionIDBase64) < 0) 
+	{
+		ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "base64 session id failed\n");
+		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
 		return;
 	}
 
@@ -62,7 +79,7 @@ static ngx_int_t wx_login_subrequest_post_handler(ngx_http_request_t *r, void *d
 	{
 		ngx_str_t bak = { (size_t)(r->upstream->buffer.last - r->upstream->buffer.pos), r->upstream->buffer.pos };
 		WXSessionInfo info;
-		std::string backStr = (const char*)bak.data;
+		std::string backStr((const char*)bak.data, bak.len);
 		if (!decode<WXSessionInfo>(backStr, info))
 		{
 			ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "get data from wx success, but parse json failed, json value=%s\n", backStr.c_str());
@@ -90,7 +107,7 @@ static void ngx_http_customer_manager_login_handler(ngx_http_request_t *r)
 	}
 
 	LoginParam codeObj;
-	std::string codeJson = (const char*)body_content.data;
+	std::string codeJson((const char*)body_content.data, body_len);
 	if (!decode<LoginParam>(codeJson, codeObj))
 	{
 		ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "parse login param json failed, data=%s", (const char*)codeJson.c_str());

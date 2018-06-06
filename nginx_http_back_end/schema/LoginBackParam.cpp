@@ -6,31 +6,30 @@
 
 LoginBackParam::LoginBackParam()
 {
-    code = 0;
-    __skip_code = false;
-    __json_has_code = false;
+    expire = 0;
+    __skip_expire = false;
+    __json_has_expire = false;
 
-    desc = "default desc value";
-    __skip_desc = false;
-    __json_has_desc = false;
+    __skip_session_id = false;
+    __json_has_session_id = false;
 
-    __skip_data = false;
-    __json_has_data = false;
+    __skip_openid = false;
+    __json_has_openid = false;
 }
 
 LoginBackParam& LoginBackParam::operator=(const LoginBackParam& obj_val)
 {
-    this->code = obj_val.code;
-    this->desc = obj_val.desc;
-    this->data = obj_val.data;
+    this->expire = obj_val.expire;
+    this->session_id = obj_val.session_id;
+    this->openid = obj_val.openid;
     return *this;
 }
 
 bool LoginBackParam::operator==(const LoginBackParam& obj_val) const
 {
-    if (!(this->code == obj_val.code)) return false;
-    if (!(this->desc == obj_val.desc)) return false;
-    if (!(this->data == obj_val.data)) return false;
+    if (!(this->expire == obj_val.expire)) return false;
+    if (!(this->session_id == obj_val.session_id)) return false;
+    if (!(this->openid == obj_val.openid)) return false;
     return true;
 }
 
@@ -39,9 +38,9 @@ bool LoginBackParam::encode(allocator_t& alloc, rapidjson::Value& json_val) cons
     do
     {
         json_val.SetObject();
-        if (!__skip_code && !encode_field(code, "code", alloc, json_val)) break;
-        if (!__skip_desc && !encode_field(desc, "desc", alloc, json_val)) break;
-        if (!__skip_data && !encode_field(data, "data", alloc, json_val)) break;
+        if (!__skip_expire && !encode_field(expire, "expire", alloc, json_val)) break;
+        if (!__skip_session_id && !encode_field(session_id, "session_id", alloc, json_val)) break;
+        if (!__skip_openid && !encode_field(openid, "openid", alloc, json_val)) break;
 
         return true;
     } while (0);
@@ -53,9 +52,9 @@ bool LoginBackParam::decode(const rapidjson::Value& json_val)
 {
     do
     {
-        if (!decode_field(json_val, "code", code, __json_has_code)) break;
-        if (!decode_field(json_val, "desc", desc, __json_has_desc)) break;
-        if (!decode_field(json_val, "data", data, __json_has_data)) break;
+        if (!decode_field(json_val, "expire", expire, __json_has_expire)) break;
+        if (!decode_field(json_val, "session_id", session_id, __json_has_session_id)) break;
+        if (!decode_field(json_val, "openid", openid, __json_has_openid)) break;
 
         return true;
     } while (0);
