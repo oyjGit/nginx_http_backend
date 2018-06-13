@@ -7,6 +7,7 @@
 
 #define SESSION_ID_LEN 24
 #define SESSION_ID_BASE64_LEN 32
+#define REDIS_SESSION_EXPIRE 24*60*60
 
 extern ngx_module_t ngx_http_back_end_module;
 

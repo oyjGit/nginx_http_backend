@@ -8,6 +8,18 @@
 extern "C"{
 #endif
 
+static ngx_int_t wx_login_set_redis_subrequest(ngx_http_request_t *r, void *data, ngx_int_t rc)
+{
+	printf("test redis set\n");
+	/*如果没有返回200则直接把错误码发回用户*/
+	if (r->headers_out.status != NGX_HTTP_OK)
+	{
+		ngx_http_finalize_request(r, r->headers_out.status);
+		return 0;
+	}
+	return 0;
+}
+
 /*激活父请求回调*/
 static void wx_login_subrequest_post_father_handler(ngx_http_request_t * r)
 {
@@ -15,22 +27,6 @@ static void wx_login_subrequest_post_father_handler(ngx_http_request_t * r)
 	if (r->headers_out.status != NGX_HTTP_OK)
 	{
 		ngx_http_finalize_request(r, r->headers_out.status);
-		return;
-	}
-
-	char sessionID[SESSION_ID_LEN]{0};
-	if (0 != get_random_id(sessionID, SESSION_ID_LEN)) 
-	{
-		ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "generate session id failed\n");
-		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
-		return;
-	}
-
-	char sessionIDBase64[SESSION_ID_BASE64_LEN + 1]{0};
-	if (base64_encode(sessionID, SESSION_ID_LEN, sessionIDBase64) < 0) 
-	{
-		ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "base64 session id failed\n");
-		ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
 		return;
 	}
 
@@ -83,12 +79,70 @@ static ngx_int_t wx_login_subrequest_post_handler(ngx_http_request_t *r, void *d
 		if (!decode<WXSessionInfo>(backStr, info))
 		{
 			ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "get data from wx success, but parse json failed, json value=%s\n", backStr.c_str());
-			pr->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
+			goto LOGIN_FAILED;
 		}
-		ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "get data from wx success, id=%s, session_key=%s\n", info.openid.c_str(), info.session_key.c_str());
+		else
+		{
+			//char sessionID[SESSION_ID_LEN]{0};
+			//if (0 != get_random_id(sessionID, SESSION_ID_LEN))
+			//{
+			//	ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "generate session id failed\n");
+			//	goto LOGIN_FAILED;
+			//}
+
+			//char sessionIDBase64[SESSION_ID_BASE64_LEN + 1]{0};
+			//if (base64_encode(sessionID, SESSION_ID_LEN, sessionIDBase64) < 0)
+			//{
+			//	ngx_log_error(NGX_LOG_DEBUG, r->connection->log, errno, "base64 session id failed\n");
+			//	goto LOGIN_FAILED;
+			//}
+
+			/*子请求的回调方法将在此结构体中设置*/
+			ngx_http_post_subrequest_t *psr = (ngx_http_post_subrequest_t*)ngx_palloc(r->pool, sizeof(ngx_http_post_subrequest_t));
+			if (psr == NULL)
+			{
+				ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "alloc ngx_http_post_subrequest_t struct failed");
+				goto LOGIN_FAILED;
+			}
+			psr->handler = wx_login_set_redis_subrequest;
+			/*构造子请求*/
+			/*URL构造=前缀+参数*/
+			ngx_http_cutomer_module_conf_t* cf = (ngx_http_cutomer_module_conf_t*)ngx_http_get_module_main_conf(pr, ngx_http_back_end_module);
+			static ngx_str_t sub_location = ngx_string("/redis_set");
+			static ngx_str_t key_str = ngx_string("key=");
+			static ngx_str_t value_str = ngx_string("&value=");
+			static ngx_str_t pwd_str = ngx_string("&pwd=");
+			ngx_str_t key = { info.openid.size(), (u_char*)info.openid.data() };
+			ngx_str_t value = { info.session_key.size(), (u_char*)info.session_key.data() };
+			ngx_str_t sub_args;
+			sub_args.len = key_str.len + value_str.len + pwd_str.len + info.openid.size() + 
+							info.session_key.size() + cf->redis_info.pwd.len;
+			sub_args.data = (u_char *)ngx_palloc(r->pool, sub_args.len);
+			ngx_snprintf(sub_args.data, sub_args.len, "%V%V%V%V%V%V", &key_str, &key,
+				&value_str, &value, &pwd_str, &(cf->redis_info.pwd));
+
+			/*sr即为子请求*/
+			ngx_http_request_t *sr;
+			/*创建子请求*/
+			/*参数分别是：*/
+			//1.父请求 2.请求URI 3.子请求的URI参数 4.返回创建好的子请求
+			//5.子请求结束的回调
+			//6.subrequest_in_memory 标识
+			ngx_int_t rc = ngx_http_subrequest(r, &sub_location, &sub_args, &sr, psr, 0);
+			if (rc != NGX_OK)
+			{
+				ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "start set redis ngx_http_subrequest failed");
+				goto LOGIN_FAILED;
+			}
+		}
 	}
+	//本次子请求还没结束，等待redis子请求返回
+	return NGX_DONE;
+LOGIN_FAILED:
+	pr->headers_out.status = NGX_HTTP_INTERNAL_SERVER_ERROR;
 	/*设置父请求的回调方法*/
 	pr->write_event_handler = wx_login_subrequest_post_father_handler;
+	//结束本次子请求
 	return NGX_OK;
 }
 

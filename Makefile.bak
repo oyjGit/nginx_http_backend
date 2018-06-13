@@ -1,8 +1,8 @@
 
 CC =	cc
 CXX = g++ --std=c++11 -DMYSQLPP_MYSQL_HEADERS_BURIED
-#CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g 
-CFLAGS =  -pipe  -O0 -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g 
+#CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g  -DNDK_SET_VAR -DNDK_UPSTREAM_LIST
+CFLAGS =  -pipe  -O0 -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g  -DNDK_SET_VAR -DNDK_UPSTREAM_LIST
 CPP =	cc -E
 LINK =	$(CXX)
 
@@ -14,9 +14,15 @@ ALL_INCS = -I src/core \
 	-I ../nginx_http_back_end/schema \
 	-I ../nginx_http_back_end/../slothjson-master/include \
 	-I ../nginx_http_back_end/../slothjson-master/include/rapidjson \
+	-I ../ngx_devel_kit/objs \
+	-I objs/addon/ndk \
+	-I ../ngx_devel_kit/src \
+	-I ../ngx_devel_kit/objs \
+	-I objs/addon/ndk \
 	-I objs \
 	-I src/http \
-	-I src/http/modules
+	-I src/http/modules \
+	-I ../ngx_devel_kit/src
 
 
 CORE_DEPS = src/core/nginx.h \
@@ -90,6 +96,11 @@ CORE_INCS = -I src/core \
 	-I ../nginx_http_back_end/schema \
 	-I ../nginx_http_back_end/../slothjson-master/include \
 	-I ../nginx_http_back_end/../slothjson-master/include/rapidjson \
+	-I ../ngx_devel_kit/objs \
+	-I objs/addon/ndk \
+	-I ../ngx_devel_kit/src \
+	-I ../ngx_devel_kit/objs \
+	-I objs/addon/ndk \
 	-I objs
 
 
@@ -107,10 +118,11 @@ HTTP_DEPS = src/http/ngx_http.h \
 
 
 HTTP_INCS = -I src/http \
-	-I src/http/modules
+	-I src/http/modules \
+	-I ../ngx_devel_kit/src
 
 
-ADDON_DEPS = $(CORE_DEPS)  $(HTTP_DEPS)
+ADDON_DEPS = $(CORE_DEPS)                                                                             ../redis2-nginx-module-master/src/ddebug.h                                                 ../redis2-nginx-module-master/src/ngx_http_redis2_module.h                                 ../redis2-nginx-module-master/src/ngx_http_redis2_handler.h                                ../redis2-nginx-module-master/src/ngx_http_redis2_reply.h                                  ../redis2-nginx-module-master/src/ngx_http_redis2_util.h                                    ../ngx_devel_kit/src/ndk.h                                                                          ../set-misc-nginx-module-master/src/ddebug.h                                                 ../set-misc-nginx-module-master/src/ngx_http_set_default_value.h                             ../set-misc-nginx-module-master/src/ngx_http_set_hashed_upstream.h                           ../set-misc-nginx-module-master/src/ngx_http_set_quote_sql.h                                 ../set-misc-nginx-module-master/src/ngx_http_set_quote_json.h                                ../set-misc-nginx-module-master/src/ngx_http_set_unescape_uri.h                              ../set-misc-nginx-module-master/src/ngx_http_set_escape_uri.h                                ../set-misc-nginx-module-master/src/ngx_http_set_hash.h                                      ../set-misc-nginx-module-master/src/ngx_http_set_local_today.h                               ../set-misc-nginx-module-master/src/ngx_http_set_hex.h                                       ../set-misc-nginx-module-master/src/ngx_http_set_base64.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_random.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_rotate.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_secure_random.h                             ../set-misc-nginx-module-master/src/ngx_http_set_misc_module.h                                ../set-misc-nginx-module-master/src/ngx_http_set_hmac.h $(HTTP_DEPS)
 
 
 build:	binary modules manpage
@@ -391,7 +403,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/schema/LoginParam.o \
 	objs/addon/schema/WXSessionInfo.o \
 	objs/ngx_modules.o \
-	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -lpcre -lssl -lcrypto -ldl -lz \
+	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -lpcre -lssl -lcrypto -ldl -lz -lpthread \
 	-Wl,-E
 	
 
@@ -1350,29 +1362,241 @@ objs/addon/schema/WXSessionInfo.o:	$(ADDON_DEPS) \
 		../nginx_http_back_end/schema/WXSessionInfo.cpp
 
 
-modules:	objs/ngx_http_redis_module.so
+modules:	objs/ngx_http_redis2_module.so
 
-objs/ngx_http_redis_module.so:	objs/addon/ngx_http_redis-0.3.8/ngx_http_redis_module.o \
-	objs/ngx_http_redis_module_modules.o
+objs/ngx_http_redis2_module.so:	objs/addon/src/ngx_http_redis2_module.o \
+	objs/addon/src/ngx_http_redis2_handler.o \
+	objs/addon/src/ngx_http_redis2_reply.o \
+	objs/addon/src/ngx_http_redis2_util.o \
+	objs/ngx_http_redis2_module_modules.o
 
-	$(LINK) -o objs/ngx_http_redis_module.so \
-	objs/addon/ngx_http_redis-0.3.8/ngx_http_redis_module.o \
-	objs/ngx_http_redis_module_modules.o \
+	$(LINK) -o objs/ngx_http_redis2_module.so \
+	objs/addon/src/ngx_http_redis2_module.o \
+	objs/addon/src/ngx_http_redis2_handler.o \
+	objs/addon/src/ngx_http_redis2_reply.o \
+	objs/addon/src/ngx_http_redis2_util.o \
+	objs/ngx_http_redis2_module_modules.o \
 	-shared
 
 
-objs/ngx_http_redis_module_modules.o:	$(CORE_DEPS) \
-	objs/ngx_http_redis_module_modules.c
+objs/ngx_http_redis2_module_modules.o:	$(CORE_DEPS) \
+	objs/ngx_http_redis2_module_modules.c
 	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
-		-o objs/ngx_http_redis_module_modules.o \
-		objs/ngx_http_redis_module_modules.c
+		-o objs/ngx_http_redis2_module_modules.o \
+		objs/ngx_http_redis2_module_modules.c
 
 
-objs/addon/ngx_http_redis-0.3.8/ngx_http_redis_module.o:	$(ADDON_DEPS) \
-	../ngx_http_redis-0.3.8/ngx_http_redis_module.c
+objs/addon/src/ngx_http_redis2_module.o:	$(ADDON_DEPS) \
+	../redis2-nginx-module-master/src/ngx_http_redis2_module.c
 	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
-		-o objs/addon/ngx_http_redis-0.3.8/ngx_http_redis_module.o \
-		../ngx_http_redis-0.3.8/ngx_http_redis_module.c
+		-o objs/addon/src/ngx_http_redis2_module.o \
+		../redis2-nginx-module-master/src/ngx_http_redis2_module.c
+
+
+objs/addon/src/ngx_http_redis2_handler.o:	$(ADDON_DEPS) \
+	../redis2-nginx-module-master/src/ngx_http_redis2_handler.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_redis2_handler.o \
+		../redis2-nginx-module-master/src/ngx_http_redis2_handler.c
+
+
+objs/addon/src/ngx_http_redis2_reply.o:	$(ADDON_DEPS) \
+	../redis2-nginx-module-master/src/ngx_http_redis2_reply.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_redis2_reply.o \
+		../redis2-nginx-module-master/src/ngx_http_redis2_reply.c
+
+
+objs/addon/src/ngx_http_redis2_util.o:	$(ADDON_DEPS) \
+	../redis2-nginx-module-master/src/ngx_http_redis2_util.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_redis2_util.o \
+		../redis2-nginx-module-master/src/ngx_http_redis2_util.c
+
+
+modules:	objs/ndk_http_module.so
+
+objs/ndk_http_module.so:	objs/addon/src/ndk.o \
+	objs/ndk_http_module_modules.o
+
+	$(LINK) -o objs/ndk_http_module.so \
+	objs/addon/src/ndk.o \
+	objs/ndk_http_module_modules.o \
+	-shared
+
+
+objs/ndk_http_module_modules.o:	$(CORE_DEPS) \
+	objs/ndk_http_module_modules.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/ndk_http_module_modules.o \
+		objs/ndk_http_module_modules.c
+
+
+objs/addon/src/ndk.o:	$(ADDON_DEPS) \
+	../ngx_devel_kit/src/ndk.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ndk.o \
+		../ngx_devel_kit/src/ndk.c
+
+
+modules:	objs/ngx_http_set_misc_module.so
+
+objs/ngx_http_set_misc_module.so:	objs/addon/src/ngx_http_set_base32.o \
+	objs/addon/src/ngx_http_set_default_value.o \
+	objs/addon/src/ngx_http_set_hashed_upstream.o \
+	objs/addon/src/ngx_http_set_quote_sql.o \
+	objs/addon/src/ngx_http_set_quote_json.o \
+	objs/addon/src/ngx_http_set_unescape_uri.o \
+	objs/addon/src/ngx_http_set_misc_module.o \
+	objs/addon/src/ngx_http_set_escape_uri.o \
+	objs/addon/src/ngx_http_set_hash.o \
+	objs/addon/src/ngx_http_set_local_today.o \
+	objs/addon/src/ngx_http_set_hex.o \
+	objs/addon/src/ngx_http_set_base64.o \
+	objs/addon/src/ngx_http_set_random.o \
+	objs/addon/src/ngx_http_set_secure_random.o \
+	objs/addon/src/ngx_http_set_rotate.o \
+	objs/addon/src/ngx_http_set_hmac.o \
+	objs/ngx_http_set_misc_module_modules.o
+
+	$(LINK) -o objs/ngx_http_set_misc_module.so \
+	objs/addon/src/ngx_http_set_base32.o \
+	objs/addon/src/ngx_http_set_default_value.o \
+	objs/addon/src/ngx_http_set_hashed_upstream.o \
+	objs/addon/src/ngx_http_set_quote_sql.o \
+	objs/addon/src/ngx_http_set_quote_json.o \
+	objs/addon/src/ngx_http_set_unescape_uri.o \
+	objs/addon/src/ngx_http_set_misc_module.o \
+	objs/addon/src/ngx_http_set_escape_uri.o \
+	objs/addon/src/ngx_http_set_hash.o \
+	objs/addon/src/ngx_http_set_local_today.o \
+	objs/addon/src/ngx_http_set_hex.o \
+	objs/addon/src/ngx_http_set_base64.o \
+	objs/addon/src/ngx_http_set_random.o \
+	objs/addon/src/ngx_http_set_secure_random.o \
+	objs/addon/src/ngx_http_set_rotate.o \
+	objs/addon/src/ngx_http_set_hmac.o \
+	objs/ngx_http_set_misc_module_modules.o \
+	-shared
+
+
+objs/ngx_http_set_misc_module_modules.o:	$(CORE_DEPS) \
+	objs/ngx_http_set_misc_module_modules.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/ngx_http_set_misc_module_modules.o \
+		objs/ngx_http_set_misc_module_modules.c
+
+
+objs/addon/src/ngx_http_set_base32.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_base32.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_base32.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_base32.c
+
+
+objs/addon/src/ngx_http_set_default_value.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_default_value.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_default_value.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_default_value.c
+
+
+objs/addon/src/ngx_http_set_hashed_upstream.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_hashed_upstream.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_hashed_upstream.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_hashed_upstream.c
+
+
+objs/addon/src/ngx_http_set_quote_sql.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_quote_sql.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_quote_sql.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_quote_sql.c
+
+
+objs/addon/src/ngx_http_set_quote_json.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_quote_json.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_quote_json.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_quote_json.c
+
+
+objs/addon/src/ngx_http_set_unescape_uri.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_unescape_uri.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_unescape_uri.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_unescape_uri.c
+
+
+objs/addon/src/ngx_http_set_misc_module.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_misc_module.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_misc_module.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_misc_module.c
+
+
+objs/addon/src/ngx_http_set_escape_uri.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_escape_uri.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_escape_uri.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_escape_uri.c
+
+
+objs/addon/src/ngx_http_set_hash.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_hash.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_hash.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_hash.c
+
+
+objs/addon/src/ngx_http_set_local_today.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_local_today.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_local_today.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_local_today.c
+
+
+objs/addon/src/ngx_http_set_hex.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_hex.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_hex.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_hex.c
+
+
+objs/addon/src/ngx_http_set_base64.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_base64.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_base64.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_base64.c
+
+
+objs/addon/src/ngx_http_set_random.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_random.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_random.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_random.c
+
+
+objs/addon/src/ngx_http_set_secure_random.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_secure_random.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_secure_random.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_secure_random.c
+
+
+objs/addon/src/ngx_http_set_rotate.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_rotate.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_rotate.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_rotate.c
+
+
+objs/addon/src/ngx_http_set_hmac.o:	$(ADDON_DEPS) \
+	../set-misc-nginx-module-master/src/ngx_http_set_hmac.c
+	$(CC) -c -fPIC $(CFLAGS) $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_set_hmac.o \
+		../set-misc-nginx-module-master/src/ngx_http_set_hmac.c
 
 
 manpage:	objs/nginx.8
@@ -1443,7 +1667,17 @@ install:	build
 	test -d '$(DESTDIR)/usr/local/nginx/modules' \
 		|| mkdir -p '$(DESTDIR)/usr/local/nginx/modules'
 
-	test ! -f '$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis_module.so' \
-		|| mv '$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis_module.so' \
-			'$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis_module.so.old'
-	cp objs/ngx_http_redis_module.so '$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis_module.so'
+	test ! -f '$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis2_module.so' \
+		|| mv '$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis2_module.so' \
+			'$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis2_module.so.old'
+	cp objs/ngx_http_redis2_module.so '$(DESTDIR)/usr/local/nginx/modules/ngx_http_redis2_module.so'
+
+	test ! -f '$(DESTDIR)/usr/local/nginx/modules/ndk_http_module.so' \
+		|| mv '$(DESTDIR)/usr/local/nginx/modules/ndk_http_module.so' \
+			'$(DESTDIR)/usr/local/nginx/modules/ndk_http_module.so.old'
+	cp objs/ndk_http_module.so '$(DESTDIR)/usr/local/nginx/modules/ndk_http_module.so'
+
+	test ! -f '$(DESTDIR)/usr/local/nginx/modules/ngx_http_set_misc_module.so' \
+		|| mv '$(DESTDIR)/usr/local/nginx/modules/ngx_http_set_misc_module.so' \
+			'$(DESTDIR)/usr/local/nginx/modules/ngx_http_set_misc_module.so.old'
+	cp objs/ngx_http_set_misc_module.so '$(DESTDIR)/usr/local/nginx/modules/ngx_http_set_misc_module.so'
