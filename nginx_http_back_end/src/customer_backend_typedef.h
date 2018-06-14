@@ -36,4 +36,6 @@ typedef struct cutomer_module_conf_s
 	wx_backend_info_t		wx_backend_info;
 }ngx_http_cutomer_module_conf_t;
 
+extern ngx_module_t ngx_http_back_end_module;
+
 #endif // !__CUSTOMER_BACKEND_H__
