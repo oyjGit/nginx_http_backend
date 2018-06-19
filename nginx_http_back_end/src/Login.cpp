@@ -83,7 +83,6 @@ static void login_done(ngx_http_request_t * r)
 
 	//必须调用ngx_http_finalize_request
 	ngx_http_finalize_request(r, rc);
-	printf("login send done\n");
 }
 
 static ngx_int_t wx_login_set_redis_subrequest_done(ngx_http_request_t *r, void *data, ngx_int_t rc)
@@ -189,7 +188,7 @@ static void wx_login_subrequest_post_father_handler(ngx_http_request_t * r)
 	//1.父请求 2.请求URI 3.子请求的URI参数 4.返回创建好的子请求
 	//5.子请求结束的回调
 	//6.subrequest_in_memory 标识
-	ngx_int_t rc = ngx_http_subrequest(r, &sub_location, &sub_args, &sr, psr, 0);
+	ngx_int_t rc = ngx_http_subrequest(r, &sub_location, &sub_args, &sr, psr, NGX_HTTP_SUBREQUEST_IN_MEMORY);
 	if (rc != NGX_OK)
 	{
 		ngx_log_error(NGX_LOG_ERR, r->connection->log, errno, "start set redis ngx_http_subrequest failed, rc=%d", rc);
@@ -321,7 +320,8 @@ static void ngx_http_customer_manager_login_handler(ngx_http_request_t *r)
 	//1.父请求 2.请求URI 3.子请求的URI参数 4.返回创建好的子请求
 	//5.子请求结束的回调
 	//6.subrequest_in_memory 标识
-	ngx_int_t rc = ngx_http_subrequest(r, &sub_location, &sub_args, &sr, psr, 0);
+	//默认子请求的输出是直接返回给客户端的，如果不想返回输出，需要设置NGX_HTTP_SUBREQUEST_IN_MEMORY标志。注意，不是所有Handler模块都支持此标志，比如fastcgi模块不支持，proxy模块支持
+	ngx_int_t rc = ngx_http_subrequest(r, &sub_location, &sub_args, &sr, psr, NGX_HTTP_SUBREQUEST_IN_MEMORY);
 
 	if (rc != NGX_OK)
 	{
