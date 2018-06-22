@@ -19,6 +19,7 @@ ALL_INCS = -I src/core \
 	-I ../ngx_devel_kit/src \
 	-I ../ngx_devel_kit/objs \
 	-I objs/addon/ndk \
+	-I /usr/local/include/libdrizzle-1.0 \
 	-I objs \
 	-I src/http \
 	-I src/http/modules \
@@ -101,6 +102,7 @@ CORE_INCS = -I src/core \
 	-I ../ngx_devel_kit/src \
 	-I ../ngx_devel_kit/objs \
 	-I objs/addon/ndk \
+	-I /usr/local/include/libdrizzle-1.0 \
 	-I objs
 
 
@@ -122,7 +124,7 @@ HTTP_INCS = -I src/http \
 	-I ../ngx_devel_kit/src
 
 
-ADDON_DEPS = $(CORE_DEPS)                                                                             ../redis2-nginx-module-master/src/ddebug.h                                                 ../redis2-nginx-module-master/src/ngx_http_redis2_module.h                                 ../redis2-nginx-module-master/src/ngx_http_redis2_handler.h                                ../redis2-nginx-module-master/src/ngx_http_redis2_reply.h                                  ../redis2-nginx-module-master/src/ngx_http_redis2_util.h                                    ../ngx_devel_kit/src/ndk.h                                                                          ../set-misc-nginx-module-master/src/ddebug.h                                                 ../set-misc-nginx-module-master/src/ngx_http_set_default_value.h                             ../set-misc-nginx-module-master/src/ngx_http_set_hashed_upstream.h                           ../set-misc-nginx-module-master/src/ngx_http_set_quote_sql.h                                 ../set-misc-nginx-module-master/src/ngx_http_set_quote_json.h                                ../set-misc-nginx-module-master/src/ngx_http_set_unescape_uri.h                              ../set-misc-nginx-module-master/src/ngx_http_set_escape_uri.h                                ../set-misc-nginx-module-master/src/ngx_http_set_hash.h                                      ../set-misc-nginx-module-master/src/ngx_http_set_local_today.h                               ../set-misc-nginx-module-master/src/ngx_http_set_hex.h                                       ../set-misc-nginx-module-master/src/ngx_http_set_base64.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_random.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_rotate.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_secure_random.h                             ../set-misc-nginx-module-master/src/ngx_http_set_misc_module.h                                ../set-misc-nginx-module-master/src/ngx_http_set_hmac.h $(HTTP_DEPS)
+ADDON_DEPS = $(CORE_DEPS)                                                                             ../redis2-nginx-module-master/src/ddebug.h                                                 ../redis2-nginx-module-master/src/ngx_http_redis2_module.h                                 ../redis2-nginx-module-master/src/ngx_http_redis2_handler.h                                ../redis2-nginx-module-master/src/ngx_http_redis2_reply.h                                  ../redis2-nginx-module-master/src/ngx_http_redis2_util.h                                    ../ngx_devel_kit/src/ndk.h                                                                          ../set-misc-nginx-module-master/src/ddebug.h                                                 ../set-misc-nginx-module-master/src/ngx_http_set_default_value.h                             ../set-misc-nginx-module-master/src/ngx_http_set_hashed_upstream.h                           ../set-misc-nginx-module-master/src/ngx_http_set_quote_sql.h                                 ../set-misc-nginx-module-master/src/ngx_http_set_quote_json.h                                ../set-misc-nginx-module-master/src/ngx_http_set_unescape_uri.h                              ../set-misc-nginx-module-master/src/ngx_http_set_escape_uri.h                                ../set-misc-nginx-module-master/src/ngx_http_set_hash.h                                      ../set-misc-nginx-module-master/src/ngx_http_set_local_today.h                               ../set-misc-nginx-module-master/src/ngx_http_set_hex.h                                       ../set-misc-nginx-module-master/src/ngx_http_set_base64.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_random.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_rotate.h                                    ../set-misc-nginx-module-master/src/ngx_http_set_secure_random.h                             ../set-misc-nginx-module-master/src/ngx_http_set_misc_module.h                                ../set-misc-nginx-module-master/src/ngx_http_set_hmac.h ../drizzle-nginx-module-master/src/ddebug.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_module.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_handler.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_processor.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_upstream.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_util.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_output.h ../drizzle-nginx-module-master/src/resty_dbd_stream.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_keepalive.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_quoting.h ../drizzle-nginx-module-master/src/ngx_http_drizzle_checker.h ../rds-json-nginx-module-master/src/ddebug.h ../rds-json-nginx-module-master/src/resty_dbd_stream.h ../rds-json-nginx-module-master/src/ngx_http_rds_json_filter_module.h ../rds-json-nginx-module-master/src/ngx_http_rds_json_processor.h ../rds-json-nginx-module-master/src/ngx_http_rds_json_util.h ../rds-json-nginx-module-master/src/ngx_http_rds.h ../rds-json-nginx-module-master/src/resty_dbd_stream.h ../rds-json-nginx-module-master/src/ngx_http_rds_json_output.h ../rds-json-nginx-module-master/src/ngx_http_rds_utils.h ../rds-json-nginx-module-master/src/ngx_http_rds_json_handler.h $(HTTP_DEPS)
 
 
 build:	binary modules manpage
@@ -264,6 +266,20 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/schema/LoginBackParam.o \
 	objs/addon/schema/LoginParam.o \
 	objs/addon/schema/WXSessionInfo.o \
+	objs/addon/src/ngx_http_drizzle_module.o \
+	objs/addon/src/ngx_http_drizzle_handler.o \
+	objs/addon/src/ngx_http_drizzle_processor.o \
+	objs/addon/src/ngx_http_drizzle_upstream.o \
+	objs/addon/src/ngx_http_drizzle_util.o \
+	objs/addon/src/ngx_http_drizzle_output.o \
+	objs/addon/src/ngx_http_drizzle_keepalive.o \
+	objs/addon/src/ngx_http_drizzle_quoting.o \
+	objs/addon/src/ngx_http_drizzle_checker.o \
+	objs/addon/src/ngx_http_rds_json_filter_module.o \
+	objs/addon/src/ngx_http_rds_json_processor.o \
+	objs/addon/src/ngx_http_rds_json_util.o \
+	objs/addon/src/ngx_http_rds_json_output.o \
+	objs/addon/src/ngx_http_rds_json_handler.o \
 	objs/ngx_modules.o
 
 	$(LINK) -o objs/nginx \
@@ -402,8 +418,22 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/schema/LoginBackParam.o \
 	objs/addon/schema/LoginParam.o \
 	objs/addon/schema/WXSessionInfo.o \
+	objs/addon/src/ngx_http_drizzle_module.o \
+	objs/addon/src/ngx_http_drizzle_handler.o \
+	objs/addon/src/ngx_http_drizzle_processor.o \
+	objs/addon/src/ngx_http_drizzle_upstream.o \
+	objs/addon/src/ngx_http_drizzle_util.o \
+	objs/addon/src/ngx_http_drizzle_output.o \
+	objs/addon/src/ngx_http_drizzle_keepalive.o \
+	objs/addon/src/ngx_http_drizzle_quoting.o \
+	objs/addon/src/ngx_http_drizzle_checker.o \
+	objs/addon/src/ngx_http_rds_json_filter_module.o \
+	objs/addon/src/ngx_http_rds_json_processor.o \
+	objs/addon/src/ngx_http_rds_json_util.o \
+	objs/addon/src/ngx_http_rds_json_output.o \
+	objs/addon/src/ngx_http_rds_json_handler.o \
 	objs/ngx_modules.o \
-	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -lpcre -lssl -lcrypto -ldl -lz -lpthread \
+	-ldl -lpthread -lcrypt -lmysqlpp -lmysqlclient -lhiredis -L/usr/local/lib -ldrizzle -lpcre -lssl -lcrypto -ldl -lz -lpthread \
 	-Wl,-E
 	
 
@@ -1360,6 +1390,104 @@ objs/addon/schema/WXSessionInfo.o:	$(ADDON_DEPS) \
 	$(CXX) -c $(CFLAGS)  $(ALL_INCS) \
 		-o objs/addon/schema/WXSessionInfo.o \
 		../nginx_http_back_end/schema/WXSessionInfo.cpp
+
+
+objs/addon/src/ngx_http_drizzle_module.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_module.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_module.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_module.c
+
+
+objs/addon/src/ngx_http_drizzle_handler.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_handler.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_handler.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_handler.c
+
+
+objs/addon/src/ngx_http_drizzle_processor.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_processor.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_processor.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_processor.c
+
+
+objs/addon/src/ngx_http_drizzle_upstream.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_upstream.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_upstream.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_upstream.c
+
+
+objs/addon/src/ngx_http_drizzle_util.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_util.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_util.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_util.c
+
+
+objs/addon/src/ngx_http_drizzle_output.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_output.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_output.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_output.c
+
+
+objs/addon/src/ngx_http_drizzle_keepalive.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_keepalive.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_keepalive.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_keepalive.c
+
+
+objs/addon/src/ngx_http_drizzle_quoting.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_quoting.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_quoting.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_quoting.c
+
+
+objs/addon/src/ngx_http_drizzle_checker.o:	$(ADDON_DEPS) \
+	../drizzle-nginx-module-master/src/ngx_http_drizzle_checker.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_drizzle_checker.o \
+		../drizzle-nginx-module-master/src/ngx_http_drizzle_checker.c
+
+
+objs/addon/src/ngx_http_rds_json_filter_module.o:	$(ADDON_DEPS) \
+	../rds-json-nginx-module-master/src/ngx_http_rds_json_filter_module.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_rds_json_filter_module.o \
+		../rds-json-nginx-module-master/src/ngx_http_rds_json_filter_module.c
+
+
+objs/addon/src/ngx_http_rds_json_processor.o:	$(ADDON_DEPS) \
+	../rds-json-nginx-module-master/src/ngx_http_rds_json_processor.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_rds_json_processor.o \
+		../rds-json-nginx-module-master/src/ngx_http_rds_json_processor.c
+
+
+objs/addon/src/ngx_http_rds_json_util.o:	$(ADDON_DEPS) \
+	../rds-json-nginx-module-master/src/ngx_http_rds_json_util.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_rds_json_util.o \
+		../rds-json-nginx-module-master/src/ngx_http_rds_json_util.c
+
+
+objs/addon/src/ngx_http_rds_json_output.o:	$(ADDON_DEPS) \
+	../rds-json-nginx-module-master/src/ngx_http_rds_json_output.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_rds_json_output.o \
+		../rds-json-nginx-module-master/src/ngx_http_rds_json_output.c
+
+
+objs/addon/src/ngx_http_rds_json_handler.o:	$(ADDON_DEPS) \
+	../rds-json-nginx-module-master/src/ngx_http_rds_json_handler.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/src/ngx_http_rds_json_handler.o \
+		../rds-json-nginx-module-master/src/ngx_http_rds_json_handler.c
 
 
 modules:	objs/ngx_http_redis2_module.so
